@@ -5,6 +5,8 @@ class Accessory::LastAccessor < Accessory::Accessor
     lambda{ Array.new }
   end
 
+  def inspect_args; nil; end
+
   def value_from(data)
     data.last
   end

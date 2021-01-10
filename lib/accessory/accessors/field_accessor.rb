@@ -7,6 +7,10 @@ class Accessory::FieldAccessor < Accessory::Accessor
     @setter_method_name = :"#{field_name}="
   end
 
+  def inspect_args
+    @getter_method_name.inspect
+  end
+
   def default_fn_for_previous_step
     lambda do
       require 'ostruct'

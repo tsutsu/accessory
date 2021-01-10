@@ -11,6 +11,10 @@ class Accessory::InstanceVariableAccessor < Accessory::Accessor
     @ivar_name = ivar_name
   end
 
+  def inspect_args
+    @ivar_name.to_s
+  end
+
   def default_fn_for_previous_step
     lambda{ Object.new }
   end

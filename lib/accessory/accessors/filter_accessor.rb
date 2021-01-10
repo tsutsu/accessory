@@ -5,6 +5,10 @@ class Accessory::FilterAccessor < Accessory::Accessor
     @pred = pred
   end
 
+  def inspect_args
+    @pred.inspect
+  end
+
   def default_fn_for_previous_step
     lambda{ Array.new }
   end

@@ -5,6 +5,8 @@ class Accessory::FirstAccessor < Accessory::Accessor
     lambda{ Array.new }
   end
 
+  def inspect_args; nil; end
+
   def value_from(data)
     data.first
   end

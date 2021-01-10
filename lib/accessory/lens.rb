@@ -11,36 +11,8 @@ require 'accessory/accessors/first_accessor'
 require 'accessory/accessors/last_accessor'
 
 class Accessory::Lens
-  def self.[](*path)
-    self.new(path)
-  end
-
-  def self.field(...)
-    Accessory::FieldAccessor.new(...)
-  end
-
-  def self.ivar(...)
-    Accessory::InstanceVariableAccessor.new(...)
-  end
-
-  def self.betwixt(...)
-    Accessory::BetwixtAccessor.new(...)
-  end
-
-  def self.before_first
-    self.betwixt(0)
-  end
-
-  def self.after_last
-    self.betwixt(-1)
-  end
-
-  def self.between_each
-    Accessory::BetweenEachAccessor.new
-  end
-
-  def self.all
-    Accessory::AllAccessor.new
+  def inspect
+    "#<Lens on=#{@doc.inspect} #{@path.inspect(format: :short)}>"
   end
 
   def self.first

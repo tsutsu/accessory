@@ -7,6 +7,10 @@ class Accessory::BetwixtAccessor < Accessory::Accessor
     @offset = offset
   end
 
+  def inspect_args
+    @offset.inspect
+  end
+
   def default_fn_for_previous_step
     lambda{ Array.new }
   end

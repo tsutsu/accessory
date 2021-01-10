@@ -6,6 +6,19 @@ class Accessory::SubscriptAccessor < Accessory::Accessor
     @key = key
   end
 
+  def inspect(format: :long)
+    case format
+    when :long
+      super()
+    when :short
+      @key.inspect
+    end
+  end
+
+  def inspect_args
+    @key.inspect
+  end
+
   def default_fn_for_previous_step
     lambda{ Hash.new }
   end

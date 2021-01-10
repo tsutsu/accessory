@@ -5,6 +5,8 @@ class Accessory::AllAccessor < Accessory::Accessor
     lambda{ Array.new }
   end
 
+  def inspect_args; nil; end
+
   def get(data, &succ)
     if succ
       (data || []).map(&succ)

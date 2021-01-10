@@ -6,6 +6,8 @@ class Accessory::BetweenEachAccessor < Accessory::Accessor
     lambda{ Array.new }
   end
 
+  def inspect_args; nil; end
+
   def value_from(data)
     data_len = data.length
 
