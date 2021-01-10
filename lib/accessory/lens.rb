@@ -1,103 +1,66 @@
 module Accessory; end
 
-require 'accessory/accessors/subscript_accessor'
-require 'accessory/accessors/field_accessor'
-require 'accessory/accessors/filter_accessor'
-require 'accessory/accessors/instance_variable_accessor'
-require 'accessory/accessors/betwixt_accessor'
-require 'accessory/accessors/between_each_accessor'
-require 'accessory/accessors/all_accessor'
-require 'accessory/accessors/first_accessor'
-require 'accessory/accessors/last_accessor'
+require 'accessory/lens_path'
 
 class Accessory::Lens
+  def self.on(doc, path: nil)
+    self.new(doc, path || Accessory::LensPath.empty).freeze
+  end
+
+  class << self
+    private :new
+  end
+
+  def initialize(doc, lens_path)
+    @doc = doc
+    @path = lens_path
+  end
+
+  attr_reader :path
+
   def inspect
     "#<Lens on=#{@doc.inspect} #{@path.inspect(format: :short)}>"
   end
 
-  def self.first
-    Accessory::FirstAccessor.new
-  end
-
-  def self.last
-    Accessory::LastAccessor.new
-  end
-
-  def self.filter(&pred)
-    Accessory::FilterAccessor.new(pred)
-  end
-
-  def initialize(path)
-    @path = path.map do |part|
-      case part
-      when Accessory::Accessor
-        part
-      when Array
-        Accessory::SubscriptAccessor.new(part[0], default: part[1])
-      else
-        Accessory::SubscriptAccessor.new(part)
-      end
+  def then(accessor)
+    d = self.dup
+    d.instance_eval do
+      @path = @path.then(accessor)
     end
+    d.freeze
+  end
 
-    mk_default_fns =
-      @path.map(&:default_fn_for_previous_step)[1..-1] + [lambda{ nil }]
-
-    @path.zip(mk_default_fns).each do |(acc, mk_default_fn)|
-      acc.make_default_fn = mk_default_fn
+  def +(lens_path)
+    d = self.dup
+    d.instance_eval do
+      @path = @path + lens_path
     end
+    d.freeze
   end
 
-  def get_in(doc)
-    if @path.empty?
-      doc
-    else
-      get_in_step(doc, @path)
-    end
+  def get_in
+    @path.get_in(@doc)
   end
 
-  def get_and_update_in(doc, &mutator_fn)
-    if @path.empty?
-      doc
-    else
-      get_and_update_in_step(doc, @path, mutator_fn)
-    end
+  def get_and_update_in(&mutator_fn)
+    @path.get_and_update_in(@doc, &mutator_fn)
   end
 
-  def update_in(data, &new_value_fn)
-    _, new_data = self.get_and_update_in(data){ |v| [nil, new_value_fn.call(v)] }
-    new_data
+  def update_in(&new_value_fn)
+    @path.update_in(@doc, &new_value_fn)
   end
 
-  def put_in(data, new_value)
-    _, new_data = self.get_and_update_in(data){ [nil, new_value] }
-    new_data
+  def put_in(new_value)
+    @path.put_in(@doc, new_value)
   end
 
-  def pop_in(data)
-    self.get_and_update_in(data){ :pop }
+  def pop_in
+    @path.pop_in(@doc)
   end
+end
 
-  private
-  def get_in_step(data, path)
-    step_accessor = path.first
-    rest_of_path = path[1..-1]
-
-    if rest_of_path.empty?
-      step_accessor.get(data)
-    else
-      step_accessor.get(data){ |v| get_in_step(v, rest_of_path) }
-    end
-  end
-
-  private
-  def get_and_update_in_step(data, path, mutator_fn)
-    step_accessor = path.first
-    rest_of_path = path[1..-1]
-
-    if rest_of_path.empty?
-      step_accessor.get_and_update(data, &mutator_fn)
-    else
-      step_accessor.get_and_update(data){ |v| get_and_update_in_step(v, rest_of_path, mutator_fn) }
-    end
+class Accessory::LensPath
+  def on(doc)
+    Accessory::Lens.on(doc, path: self)
   end
 end

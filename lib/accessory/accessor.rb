@@ -2,9 +2,11 @@ module Accessory; end
 
 class Accessory::Accessor
   DEFAULT_NOT_SET_SENTINEL = :"98e47971-e708-42ca-bee7-0c62fe5e11c9"
+  TERMINAL_DEFAULT_FN = lambda{ nil }
 
   def initialize(default: DEFAULT_NOT_SET_SENTINEL)
     @default_value = default
+    @make_default_fn = TERMINAL_DEFAULT_FN
   end
 
   def name
