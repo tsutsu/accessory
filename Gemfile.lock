@@ -1,0 +1,20 @@
+PATH
+  remote: .
+  specs:
+    accessory (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+
+PLATFORMS
+  x86_64-darwin-20
+
+DEPENDENCIES
+  accessory!
+
+RUBY VERSION
+   ruby 3.0.0p0
+
+BUNDLED WITH
+   2.2.4
