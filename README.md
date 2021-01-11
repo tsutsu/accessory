@@ -177,8 +177,7 @@ Using `put_in` with this lens will have the result you'd expect:
 
 ```ruby
 doc = {}
-lens = LensPath[:foo, Access.first, Access.attr(:name), :bar]
-lens.put_in(doc, 1)
+(doc.lens / :foo / Access.first / Access.attr(:name) / :bar).put_in(1)
 doc # => {:foo=>[#<OpenStruct name={:bar=>1}>]}
 ```
 
@@ -186,7 +185,9 @@ doc # => {:foo=>[#<OpenStruct name={:bar=>1}>]}
 
 ### `SubscriptAccessor`
 
-* Aliases: `key`, `LensPath#[key]`
+* Aliases:
+  * `LensPath#[](key)`
+  * `key` when `not(key.kind_of?(Accessor))` (special case in `LensPath#initialize`)
 
 * Elixir equivalents: [`Access.at/1`](https://hexdocs.pm/elixir/Access.html#at/1), [`Access.key/2`](https://hexdocs.pm/elixir/Access.html#key/2)
 
