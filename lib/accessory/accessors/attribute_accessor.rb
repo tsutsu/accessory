@@ -7,8 +7,19 @@ class Accessory::AttributeAccessor < Accessory::Accessor
     @setter_method_name = :"#{attr_name}="
   end
 
+  def name; "attr"; end
+
   def inspect_args
     @getter_method_name.inspect
+  end
+
+  def inspect(format: :long)
+    case format
+    when :long
+      super()
+    when :short
+      ".#{@getter_method_name}"
+    end
   end
 
   def default_fn_for_previous_step
