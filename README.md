@@ -223,6 +223,16 @@ Traverses all elements of an array.
 
 Traverses only the elements of an array that return a truthy value for the passed-in block.
 
+### `BetweenEachAccessor`
+
+* Aliases: `Access.between_each`, `LensPath#between_each`
+
+* Default constructor: `Array.new`
+
+Traverses the positions "between" array elements, including the positions at the "edges" of the array (before the first, after the last.)
+
+If `between_each` positions are targeted with `put_in`, you can insert new elements between the existing ones in an array.
+
 ### `FirstAccessor`
 
 * Aliases `Access.first`, `LensPath#first`
@@ -231,7 +241,7 @@ Traverses only the elements of an array that return a truthy value for the passe
 
 Traverses the first element of an array.
 
-Using `FirstAccessor` with `put_in` will *overwrite* the existing first element of an array, *not* insert a new element. If you want to insert a new element at the beginning of the array, use `.before_first`.
+Using `FirstAccessor` with `put_in` will *overwrite* the existing first element of an array, *not* insert a new element. If you want to insert a new element at the beginning of the array, see `BetwixtAccessor`.
 
 ### `LastAccessor`
 
@@ -241,30 +251,19 @@ Using `FirstAccessor` with `put_in` will *overwrite* the existing first element 
 
 Traverses the last element of an array.
 
-Using `LastAccessor` with `put_in` will *overwrite* the existing last element of an array, *not* insert a new element. If you want to insert a new element at the end of the array, use `.after_last`.
-
-### `BetweenEachAccessor`
-
-* Aliases: `Access.between_each`, `LensPath#between_each`
-
-* Default constructor: `Array.new`
-
-Traverses the positions "between" array elements, including the positions at the "edges" of the array.
-
-If `between_each` positions are targeted with `put_in`, you can insert new elements between the existing ones in an array.
+Using `LastAccessor` with `put_in` will *overwrite* the existing last element of an array, *not* insert a new element. If you want to insert a new element at the end of the array, see `BetwixtAccessor`.
 
 ### `BetwixtAccessor`
 
-* Aliases: `Access.betwixt(offset)`, `LensPath#betwixt(offset)`
-
-* Helpers:
-
-  * `.before_first` (equivalent to `.betwixt(0)`)
-  * `.after_last` (equivalent to `.betwixt(-1)`)
+* Aliases:
+  * `Access.betwixt(offset)`
+  * `LensPath#betwixt(offset)`
+  * `LensPath#before_first` (equivalent to `LensPath#betwixt(0)`)
+  * `LensPath#after_last` (equivalent to `LensPath#betwixt(-1)`)
 
 * Default constructor: `Array.new`
 
-Traverses "between" two array elements.
+Traverses "between" two array elements, targeting the uninitialized space.
 
 If `offset` is positive, this traverses the position between `offset - 1`  and `offset`; if `offset` is negative, this traverses the position *after* `offset`.
 
