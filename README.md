@@ -12,35 +12,19 @@ Accessory is a Ruby re-interpretation of Elixir's particular implementation of f
 
 * Also unlike Elixir, Accessory's mutative traversals (`update_in`, `put_in`, etc.) modify the input document *in place*. (Non-in-place accessors are also planned.)
 
-# Usage
-
-#### Getting Started
+## Installation
 
 ```sh
 $ gem install accessory
 ```
 
+## Usage
+
 ```ruby
 require 'accessory'
 ```
 
-#### A Basic Example
-
-```ruby
-require 'accessory'
-include Accessory
-
-doc = {}
-LensPath[:foo, Access.first, "bar"].put_in(doc, :baz)
-doc # => {foo: [{"bar" => :baz}]}
-
-LensPath[:foo, Access.after_last, "bar"].put_in(doc, :quux)
-doc # => {foo: [{"bar" => :baz}, {"bar" => :quux}]}
-
-LensPath[:foo, Access.all, "bar"].get_in(doc) # => [:baz, :quux]
-```
-
-#### Functional API
+### `LensPath`
 
 An `Accessory::LensPath` is a "free-floating" lens (not bound to a subject document.)
 
@@ -77,21 +61,6 @@ end
 Accessory::LensPath[MyAccessor.new(:bar)]
 ```
 
-#### Fluent API
-
-Rather than constructing a `LensPath` all at once, you can also construct it through a chain of method-calls that closely resemble what would be done if you were traversing from the root of a subject document.
-
-The fluent builder methods available are the same as the `Access` module functions.
-
-```ruby
-include Accessory
-
-# the following are equivalent:
-LensPath[Access.first, :foo, Access.all, "bar"]
-
-LensPath.empty.first[:foo].all["bar"]
-```
-
 #### Extending LensPaths
 
 Existing `LensPath`s may be "extended" with additional path-components using `.then`:
@@ -123,13 +92,41 @@ Another name for `+` is `/`. This allows for a traveral syntax similar to `Pathn
 LensPath.empty / :foo / :bar # => #LensPath[:foo, :bar]
 ```
 
-#### Lenses
+#### Fluent API
 
-A `LensPath` may be bound to a subject document, producing a `Lens`:
+Methods with the same names as the module-functions in `Access` are included in `LensPath`. Calling these methods has the same effect as calling the relevant module-function and passing it to `.then`.
+
+These methods allow you to construct a `LensPath` through a chain of method-calls that closely resembles a concrete traversal of a container-object.
+
+```ruby
+include Accessory
+
+# the following are equivalent:
+LensPath[Access.first, :foo, Access.all, "bar"]
+
+LensPath.empty.first[:foo].all["bar"]
+```
+
+You can combine your own accessors with the fluent methods by using `.then`:
+
+```ruby
+Accessor::LensPath.empty[:foo].first.then(MyAccessor.new)[:baz]
+```
+
+### `Lens`
+
+A `LensPath` may be bound to a subject document with `LensPath#on` to produce a `Lens`:
 
 ```ruby
 doc = {foo: 1}
 doc_foo = LensPath[:foo].on(doc) # => #<Lens on={:foo=>1} [:foo]>
+```
+
+Alternately, you can use `Lens.on(doc)` to create an identity `Lens`:
+
+```ruby
+doc = {foo: 1}
+Lens.on(doc) # => #<Lens on={:foo=>1} []>
 ```
 
 A `Lens` exposes the same traversal methods as a `LensPath`, but does not require that you pass in a document, as it already has its own:
@@ -140,38 +137,38 @@ doc_foo.put_in(2) # => {:foo=>2}
 doc # => {:foo=>2}
 ```
 
-In all other respects, a `Lens` is a decorator for a `LensPath`. Specifically, `.then` (and the related fluent helper-methods) and `+` both work to extend the `LensPath` of the `Lens` (producing a new `Lens` containing a new `LensPath`):
+A `Lens` also exposes all the extension methods of its `LensPath`. Like a `LensPath`, a `Lens` is frozen, so these methods return a new `Lens` wrapping a new `LensPath`:
 
 ```ruby
 doc = {}
-doc_foo = LensPath[:foo].on(doc) # => #<Lens on={} [:foo]>
-doc_foo_bar = doc_foo[:bar]      # => #<Lens on={} [:foo, :bar]>
+doc_root = Lens.on(doc)     # => #<Lens on={} []>
+doc_foo  = doc_root / :foo  # => #<Lens on={} [:foo]>
 ```
 
-#### The `.lens` Refinement
+#### The `.lens` refinement
 
-By `using Accessory`, a `.lens` method is added to all `Object`s, which has the same meaning as passing the object to `Accessory::Lens.on`.
+By `using Accessory`, a `.lens` method is added to all `Object`s, which has the same meaning as passing the object to `Lens.on`.
 
 ```ruby
 using Accessory
 {}.lens[:foo][:bar].put_in(5) # => {:foo=>{:bar=>5}}
 ```
 
-#### Default constructors
+### Default inference for intermediate accessors
 
-Each accessor has an expectation of what type of data it should be operating on. For example, the `AllAccessor` expects its input to be `Enumerable`.
-
-Each accessor *also* knows how to construct a valid, empty value of its expected type. The `AllAccessor`'s default constructor is `Array.new`.
+Every accessor knows how to construct a valid, empty value of the type it expects to receive as input. For example, the `AllAccessor` expects to operate on `Enumerables`, and so defines a default constructor of `Array.new`.
 
 When a `LensPath` is created, the default constructors for each accessor are "fed back" through to their predecessor accessor. The predecessor stores the default constructor to use as a fall-back default (i.e. a default for when you didn't explicitly specify a default.)
 
-This means that you usually don't need to specify defaults, because sensible values are inferred from the next operation in the LensPath traversal chain. Let's annotate a `LensPath` with the inferred defaults for each traversal-step:
+This means that you usually don't need to specify defaults in your accessors, because sensible values are inferred from the next operation in the `LensPath` traversal chain.
+
+Let's annotate a `LensPath` with the inferred defaults for each traversal-step:
 
 ```ruby
 LensPath[
-  :foo,        # Array.new (from AllAccessor succ)
-  Access.all,  # OpenStruct.new (from AttributeAccessor succ)
-  attr(:name), # Hash.new (from SubscriptAccessor succ)
+  :foo,        # Array.new (AllAccessor)
+  Access.all,  # OpenStruct.new (AttributeAccessor)
+  attr(:name), # Hash.new (SubscriptAccessor)
   :bar         # nil (no successor)
 ]
 ```
