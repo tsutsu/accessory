@@ -157,6 +157,25 @@ using Accessory
 {}.lens[:foo][:bar].put_in(5) # => {:foo=>{:bar=>5}}
 ```
 
+#### Default constructors
+
+Each accessor has an expectation of what type of data it should be operating on. For example, the `AllAccessor` expects its input to be `Enumerable`.
+
+Each accessor *also* knows how to construct a valid, empty value of its expected type. The `AllAccessor`'s default constructor is `Array.new`.
+
+When a `LensPath` is created, the default constructors for each accessor are "fed back" through to their predecessor accessor. The predecessor stores the default constructor to use as a fall-back default (i.e. a default for when you didn't explicitly specify a default.)
+
+This means that you usually don't need to specify defaults, because sensible values are inferred from the next operation in the LensPath traversal chain. Let's annotate a `LensPath` with the inferred defaults for each traversal-step:
+
+```ruby
+LensPath[
+  :foo,        # Array.new (from AllAccessor succ)
+  Access.all,  # OpenStruct.new (from AttributeAccessor succ)
+  attr(:name), # Hash.new (from SubscriptAccessor succ)
+  :bar         # nil (no successor)
+]
+```
+
 ## Built-in Accessors
 
 ### `SubscriptAccessor`
@@ -164,6 +183,8 @@ using Accessory
 * Aliases: `key`, `LensPath#[key]`
 
 * Elixir equivalents: [`Access.at/1`](https://hexdocs.pm/elixir/Access.html#at/1), [`Access.key/2`](https://hexdocs.pm/elixir/Access.html#key/2)
+
+* Default constructor: `Hash.new`
 
 Traverses into the specified `key` for an arbitrary container-object supporting the `.[]` and `.[]=` methods.
 
@@ -173,6 +194,8 @@ Traverses into the specified `key` for an arbitrary container-object supporting 
 
 * Elixir equivalent: [`Access.all/0`](https://hexdocs.pm/elixir/Access.html#all/0)
 
+* Default constructor: `Array.new`
+
 Traverses all elements of an array.
 
 ### `FilterAccessor`
@@ -181,11 +204,15 @@ Traverses all elements of an array.
 
 * Elixir equivalent: [`Access.filter/1`](https://hexdocs.pm/elixir/Access.html#filter/1)
 
+* Default constructor: `Array.new`
+
 Traverses only the elements of an array that return a truthy value for the passed-in block.
 
 ### `FirstAccessor`
 
 * Aliases `Access.first`, `LensPath#first`
+
+* Default constructor: `Array.new`
 
 Traverses the first element of an array.
 
@@ -195,6 +222,8 @@ Using `FirstAccessor` with `put_in` will *overwrite* the existing first element 
 
 * Aliases `Access.last`, `LensPath#last`
 
+* Default constructor: `Array.new`
+
 Traverses the last element of an array.
 
 Using `LastAccessor` with `put_in` will *overwrite* the existing last element of an array, *not* insert a new element. If you want to insert a new element at the end of the array, use `.after_last`.
@@ -202,6 +231,8 @@ Using `LastAccessor` with `put_in` will *overwrite* the existing last element of
 ### `BetweenEachAccessor`
 
 * Aliases: `Access.between_each`, `LensPath#between_each`
+
+* Default constructor: `Array.new`
 
 Traverses the positions "between" array elements, including the positions at the "edges" of the array.
 
@@ -215,6 +246,8 @@ If `between_each` positions are targeted with `put_in`, you can insert new eleme
 
   * `.before_first` (equivalent to `.betwixt(0)`)
   * `.after_last` (equivalent to `.betwixt(-1)`)
+
+* Default constructor: `Array.new`
 
 Traverses "between" two array elements.
 
@@ -235,5 +268,7 @@ Traverses an abstract "attribute" of an arbitrary object, represented by a named
 ### `InstanceVariableAccessor`
 
 * Aliases: `Access.ivar(name)`, `LensPath#ivar(name)`
+
+* Default constructor: `Object.new`
 
 Traverses into an instance-variable of an arbitrary object. For example, given `.ivar(:foo)`, the instance-variable `@foo` of the object will be traversed.
