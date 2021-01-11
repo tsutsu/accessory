@@ -1,7 +1,7 @@
 module Accessory; end
 
 require 'accessory/accessors/subscript_accessor'
-require 'accessory/accessors/field_accessor'
+require 'accessory/accessors/attribute_accessor'
 require 'accessory/accessors/filter_accessor'
 require 'accessory/accessors/instance_variable_accessor'
 require 'accessory/accessors/betwixt_accessor'
@@ -11,8 +11,8 @@ require 'accessory/accessors/first_accessor'
 require 'accessory/accessors/last_accessor'
 
 module Accessory::Access
-  def self.field(...)
-    Accessory::FieldAccessor.new(...)
+  def self.attr(...)
+    Accessory::AttributeAccessor.new(...)
   end
 
   def self.ivar(...)
@@ -57,8 +57,8 @@ module Accessory::Access::FluentHelpers
     self.then(Accessory::SubscriptAccessor.new(...))
   end
 
-  def field(...)
-    self.then(Accessory::FieldAccessor.new(...))
+  def attr(...)
+    self.then(Accessory::AttributeAccessor.new(...))
   end
 
   def ivar(...)
