@@ -38,6 +38,8 @@ class Accessory::Lens
     d.freeze
   end
 
+  alias_method :/, :+
+
   def get_in
     @path.get_in(@doc)
   end

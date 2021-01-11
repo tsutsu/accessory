@@ -64,6 +64,8 @@ class Accessory::LensPath
     d.freeze
   end
 
+  alias_method :/, :+
+
   def append_accessor!(part)
     accessor =
       case part
