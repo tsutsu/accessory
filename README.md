@@ -224,11 +224,13 @@ The offset in this accessor has equivalent semantics to the offset in `Array#ins
 
 `betwixt` can be used with `put_in` to insert elements between existing ones in an array, or at the beginning or end of an array.
 
-### `FieldAccessor`
+### `AttributeAccessor`
 
-* Aliases: `Access.field(name)`, `LensPath#field(name)`
+* Aliases: `Access.attr(name)`, `LensPath#attr(name)`
 
-Traverses an abstract "field" or "member" of an arbitrary object, represented by a named getter/setter method pair. For example, given `.field(:foo)`, the getter/setter method pair `.foo` and `.foo=` will be traversed.
+* Default constructor: `OpenStruct.new`
+
+Traverses an abstract "attribute" of an arbitrary object, represented by a named getter/setter method pair. For example, given `.attr(:foo)`, the getter/setter method pair `.foo` and `.foo=` will be traversed.
 
 ### `InstanceVariableAccessor`
 

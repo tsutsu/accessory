@@ -1,10 +1,10 @@
 require 'accessory/accessor'
 
-class Accessory::FieldAccessor < Accessory::Accessor
-  def initialize(field_name, **kwargs)
+class Accessory::AttributeAccessor < Accessory::Accessor
+  def initialize(attr_name, **kwargs)
     super(**kwargs)
-    @getter_method_name = :"#{field_name}"
-    @setter_method_name = :"#{field_name}="
+    @getter_method_name = :"#{attr_name}"
+    @setter_method_name = :"#{attr_name}="
   end
 
   def inspect_args
