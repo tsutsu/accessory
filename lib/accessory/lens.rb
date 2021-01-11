@@ -3,23 +3,24 @@ module Accessory; end
 require 'accessory/lens_path'
 
 class Accessory::Lens
-  def self.on(doc, path: nil)
-    self.new(doc, path || Accessory::LensPath.empty).freeze
+  def self.on(subject, path: nil)
+    self.new(subject, path || Accessory::LensPath.empty).freeze
   end
 
   class << self
     private :new
   end
 
-  def initialize(doc, lens_path)
-    @doc = doc
+  def initialize(subject, lens_path)
+    @subject = subject
     @path = lens_path
   end
 
+  attr_reader :subject
   attr_reader :path
 
   def inspect
-    "#<Lens on=#{@doc.inspect} #{@path.inspect(format: :short)}>"
+    "#<Lens on=#{@subject.inspect} #{@path.inspect(format: :short)}>"
   end
 
   def then(accessor)
@@ -41,28 +42,28 @@ class Accessory::Lens
   alias_method :/, :+
 
   def get_in
-    @path.get_in(@doc)
+    @path.get_in(@subject)
   end
 
   def get_and_update_in(&mutator_fn)
-    @path.get_and_update_in(@doc, &mutator_fn)
+    @path.get_and_update_in(@subject, &mutator_fn)
   end
 
   def update_in(&new_value_fn)
-    @path.update_in(@doc, &new_value_fn)
+    @path.update_in(@subject, &new_value_fn)
   end
 
   def put_in(new_value)
-    @path.put_in(@doc, new_value)
+    @path.put_in(@subject, new_value)
   end
 
   def pop_in
-    @path.pop_in(@doc)
+    @path.pop_in(@subject)
   end
 end
 
 class Accessory::LensPath
-  def on(doc)
-    Accessory::Lens.on(doc, path: self)
+  def on(subject)
+    Accessory::Lens.on(subject, path: self)
   end
 end
