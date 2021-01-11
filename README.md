@@ -166,11 +166,20 @@ Let's annotate a `LensPath` with the inferred defaults for each traversal-step:
 
 ```ruby
 LensPath[
-  :foo,        # Array.new (AllAccessor)
-  Access.all,  # OpenStruct.new (AttributeAccessor)
-  attr(:name), # Hash.new (SubscriptAccessor)
-  :bar         # nil (no successor)
+  :foo,               # Array.new (AllAccessor)
+  Access.first,       # OpenStruct.new (AttributeAccessor)
+  Access.attr(:name), # Hash.new (SubscriptAccessor)
+  :bar                # nil (no successor)
 ]
+```
+
+Using `put_in` with this lens will have the result you'd expect:
+
+```ruby
+doc = {}
+lens = LensPath[:foo, Access.first, Access.attr(:name), :bar]
+lens.put_in(doc, 1)
+doc # => {:foo=>[#<OpenStruct name={:bar=>1}>]}
 ```
 
 ## Built-in Accessors
