@@ -1,5 +1,9 @@
 # Accessory
 
+[![See gem 'accessory' on Rubygems](https://badge.fury.io/rb/accessory.svg)](https://badge.fury.io/rb/accessory)
+[![Yard Docs](http://img.shields.io/badge/yard-docs-blue.svg)](http://rubydoc.info/github/tsutsu/accessory/master)
+[![Documentation coverage](http://inch-ci.org/github/tsutsu/accessory.png)](http://inch-ci.org/github/tsutsu/accessory)
+
 Accessory is a Ruby re-interpretation of Elixir's particular implementation of functional lenses.
 
 * Like Elixir, Accessory provides functions called `get_in`, `update_in`, `pop_in`, `put_in`, `get_and_update_in`, etc., that each take a "lens path" and traverse it.
