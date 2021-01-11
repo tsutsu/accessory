@@ -196,6 +196,13 @@ doc # => {:foo=>[#<OpenStruct name={:bar=>1}>]}
 
 Traverses into the specified `key` for an arbitrary container-object supporting the `.[]` and `.[]=` methods.
 
+Note that subscripting into an `Array` will *work*, but may not have the results you expect:
+
+  * `[].lens[3].put_in(1)` will result in `[nil, nil, nil, 1]` (extends the `Array`)
+  * `[].lens[0][0].put_in(1)` will result in `[{0=>1}]` (default-constructs a `Hash`, not an `Array`)
+
+Other accessors (e.g. `FirstAccessor`, `BetwixtAccessor`, etc.) may fit your expectations more closely for `Array` traversal.
+
 ### `AllAccessor`
 
 * Aliases: `Access.all`, `LensPath#all`
