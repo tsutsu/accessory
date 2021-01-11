@@ -55,10 +55,18 @@ class Accessory::LensPath
   end
 
   def +(lp_b)
-    raise ArgumentError unless lp_b.kind_of?(Accessory::LensPath)
+    parts =
+      case lp_b
+      when Accessory::LensPath
+        lp_b.to_a
+      when Array
+        lp_b
+      else
+        [lp_b]
+      end
 
     d = self.dup
-    for part in lp_b.to_a
+    for part in parts
       d.append_accessor!(part)
     end
     d.freeze
