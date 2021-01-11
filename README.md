@@ -166,7 +166,7 @@ Let's annotate a `LensPath` with the inferred defaults for each traversal-step:
 
 ```ruby
 LensPath[
-  :foo,               # Array.new (AllAccessor)
+  :foo,               # Array.new (FirstAccessor)
   Access.first,       # OpenStruct.new (AttributeAccessor)
   Access.attr(:name), # Hash.new (SubscriptAccessor)
   :bar                # nil (no successor)
