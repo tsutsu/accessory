@@ -186,7 +186,8 @@ doc # => {:foo=>[#<OpenStruct name={:bar=>1}>]}
 ### `SubscriptAccessor`
 
 * Aliases:
-  * `LensPath#[](key)`
+  * `Access.subscript(key)`
+  * `LensPath#subscript(key)` or `LensPath#[](key)`
   * `key` when `not(key.kind_of?(Accessor))` (special case in `LensPath#initialize`)
 
 * Elixir equivalents: [`Access.at/1`](https://hexdocs.pm/elixir/Access.html#at/1), [`Access.key/2`](https://hexdocs.pm/elixir/Access.html#key/2)

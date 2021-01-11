@@ -11,6 +11,10 @@ require 'accessory/accessors/first_accessor'
 require 'accessory/accessors/last_accessor'
 
 module Accessory::Access
+  def self.subscript(...)
+    Accessory::SubscriptAccessor.new(...)
+  end
+
   def self.attr(...)
     Accessory::AttributeAccessor.new(...)
   end
@@ -53,6 +57,10 @@ module Accessory::Access
 end
 
 module Accessory::Access::FluentHelpers
+  def subscript(...)
+    self.then(Accessory::SubscriptAccessor.new(...))
+  end
+
   def [](...)
     self.then(Accessory::SubscriptAccessor.new(...))
   end
