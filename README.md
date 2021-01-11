@@ -111,6 +111,18 @@ lp2 = LensPath[Access.all, "bar"]
 lp1 + lp2 # => #LensPath[Access.first, :foo, Access.all, "bar"]
 ```
 
+`+` also allows "bald" accessors, or plain arrays of accessors:
+
+```ruby
+LensPath[:foo] + :bar + [:baz, :quux] # => #LensPath[:foo, :baz, :baz, :quux]
+```
+
+Another name for `+` is `/`. This allows for a traveral syntax similar to `Pathname` instances:
+
+```ruby
+LensPath.empty / :foo / :bar # => #LensPath[:foo, :bar]
+```
+
 #### Lenses
 
 A `LensPath` may be bound to a subject document, producing a `Lens`:
