@@ -159,14 +159,79 @@ using Accessory
 
 ## Built-in Accessors
 
-| Name | Alias | Elixir equiv. | Usage |
-| ---- | ----- | ------------- | ----- |
-| `AllAccessor` | `.all` | [`Access.all/0`](https://hexdocs.pm/elixir/Access.html#all/0) | Traverses all elements of an array. |
-| `BetweenEachAccessor` | `.between_each` | - | Traverses the positions "between" array elements, including the positions at the "edges" of the array. (Use with `put_in` to insert elements between existing ones.) |
-| `BetwixtAccessor` | `.betwixt(offset)`<br>`.before_first`<br>`.after_last` | - | Traverses "between" two array elements — before `offset` if `offset` is positive; after `offset` if `offset` is negative. (Use with `put_in` to insert elements between existing ones.) |
-| `FieldAccessor` | `.field(name)` | - | Traverses a "field" (a getter/setter method pair `.foo` and `.foo=`) of an arbitrary object. |
-| `FilterAccessor` | `.filter(&pred)` | [`Access.filter/1`](https://hexdocs.pm/elixir/Access.html#filter/1) | Traverses elements of an array matching the predicate `&pred`. |
-| `FirstAccessor` | `.first` | - | Traverses the first element of an array. |
-| `InstanceVariableAccessor` | `.ivar(name)` | - | Traverses into the named instance-variable of an arbitrary object. |
-| `LastAccessor` | `.last` | - | Traverses the last element of an array. |
-| `SubscriptAccessor` | `.[key]` | [`Access.at/1`](https://hexdocs.pm/elixir/Access.html#at/1)<br>[`Access.key/2`](https://hexdocs.pm/elixir/Access.html#key/2) | Traverses into the specified `key` of an arbitrary container-object supporting the `.[]` and `.[]=` methods. |
+### `SubscriptAccessor`
+
+* Aliases: `key`, `LensPath#[key]`
+
+* Elixir equivalents: [`Access.at/1`](https://hexdocs.pm/elixir/Access.html#at/1), [`Access.key/2`](https://hexdocs.pm/elixir/Access.html#key/2)
+
+Traverses into the specified `key` for an arbitrary container-object supporting the `.[]` and `.[]=` methods.
+
+### `AllAccessor`
+
+* Aliases: `Access.all`, `LensPath#all`
+
+* Elixir equivalent: [`Access.all/0`](https://hexdocs.pm/elixir/Access.html#all/0)
+
+Traverses all elements of an array.
+
+### `FilterAccessor`
+
+* Aliases: `Access.filter(&pred)`, `LensPath#filter(&pred)`
+
+* Elixir equivalent: [`Access.filter/1`](https://hexdocs.pm/elixir/Access.html#filter/1)
+
+Traverses only the elements of an array that return a truthy value for the passed-in block.
+
+### `FirstAccessor`
+
+* Aliases `Access.first`, `LensPath#first`
+
+Traverses the first element of an array.
+
+Using `FirstAccessor` with `put_in` will *overwrite* the existing first element of an array, *not* insert a new element. If you want to insert a new element at the beginning of the array, use `.before_first`.
+
+### `LastAccessor`
+
+* Aliases `Access.last`, `LensPath#last`
+
+Traverses the last element of an array.
+
+Using `LastAccessor` with `put_in` will *overwrite* the existing last element of an array, *not* insert a new element. If you want to insert a new element at the end of the array, use `.after_last`.
+
+### `BetweenEachAccessor`
+
+* Aliases: `Access.between_each`, `LensPath#between_each`
+
+Traverses the positions "between" array elements, including the positions at the "edges" of the array.
+
+If `between_each` positions are targeted with `put_in`, you can insert new elements between the existing ones in an array.
+
+### `BetwixtAccessor`
+
+* Aliases: `Access.betwixt(offset)`, `LensPath#betwixt(offset)`
+
+* Helpers:
+
+  * `.before_first` (equivalent to `.betwixt(0)`)
+  * `.after_last` (equivalent to `.betwixt(-1)`)
+
+Traverses "between" two array elements.
+
+If `offset` is positive, this traverses the position between `offset - 1`  and `offset`; if `offset` is negative, this traverses the position *after* `offset`.
+
+The offset in this accessor has equivalent semantics to the offset in `Array#insert(offset, obj)`.
+
+`betwixt` can be used with `put_in` to insert elements between existing ones in an array, or at the beginning or end of an array.
+
+### `FieldAccessor`
+
+* Aliases: `Access.field(name)`, `LensPath#field(name)`
+
+Traverses an abstract "field" or "member" of an arbitrary object, represented by a named getter/setter method pair. For example, given `.field(:foo)`, the getter/setter method pair `.foo` and `.foo=` will be traversed.
+
+### `InstanceVariableAccessor`
+
+* Aliases: `Access.ivar(name)`, `LensPath#ivar(name)`
+
+Traverses into an instance-variable of an arbitrary object. For example, given `.ivar(:foo)`, the instance-variable `@foo` of the object will be traversed.
