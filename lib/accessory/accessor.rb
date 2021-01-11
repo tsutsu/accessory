@@ -1,14 +1,22 @@
 module Accessory; end
 
+##
+# @!visibility private
 class Accessory::Accessor
+
+  # @!visibility private
   DEFAULT_NOT_SET_SENTINEL = :"98e47971-e708-42ca-bee7-0c62fe5e11c9"
+
+  # @!visibility private
   TERMINAL_DEFAULT_FN = lambda{ nil }
 
-  def initialize(default: DEFAULT_NOT_SET_SENTINEL)
-    @default_value = default
+  # @!visibility private
+  def initialize(default = nil)
+    @default_value = default || DEFAULT_NOT_SET_SENTINEL
     @make_default_fn = TERMINAL_DEFAULT_FN
   end
 
+  # @!visibility private
   def name
     n = self.class.name.split('::').last.gsub(/Accessor$/, '')
     n.gsub!(/([A-Z\d]+)([A-Z][a-z])/, '\1_\2')
@@ -18,6 +26,7 @@ class Accessory::Accessor
     n
   end
 
+  # @!visibility private
   def inspect(format: :long)
     case format
     when :long
@@ -30,6 +39,7 @@ class Accessory::Accessor
     end
   end
 
+  # @!visibility private
   HIDDEN_IVARS = [:@default_value, :@make_default_fn]
   def inspect_args
     (instance_variables - HIDDEN_IVARS).map do |ivar_k|
@@ -38,8 +48,10 @@ class Accessory::Accessor
     end.join(' ')
   end
 
+  # @!visibility private
   attr_accessor :make_default_fn
 
+  # @!visibility private
   def value_or_default(data)
     return nil if data.nil?
 
