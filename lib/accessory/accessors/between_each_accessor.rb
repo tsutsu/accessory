@@ -5,12 +5,12 @@ require 'accessory/traversal_position/enumerable_before_offset'
 # Traverses the positions "between" the elements of an +Enumerable+, including
 # the positions at the "edges" (i.e. before the first, and after the last.)
 #
-# {BetweenEachAccessor} can be used with {LensPath#put_in} to insert new
+# {BetweenEachAccessor} can be used with {Lens#put_in} to insert new
 # elements into an Enumerable between the existing ones.
 #
 # *Aliases*
 # * {Access.between_each}
-# * {Access::FluentHelpers#between_each} (included in {LensPath} and {Lens})
+# * {Access::FluentHelpers#between_each} (included in {Lens} and {BoundLens})
 #
 # <b>Default constructor</b> used by predecessor accessor
 #

@@ -8,7 +8,7 @@ require 'accessory/accessor'
 #
 # *Aliases*
 # * {Access.ivar}
-# * {Access::FluentHelpers#ivar} (included in {LensPath} and {Lens})
+# * {Access::FluentHelpers#ivar} (included in {Lens} and {BoundLens})
 #
 # <b>Default constructor</b> used by predecessor accessor
 #

@@ -1,50 +1,43 @@
 module Accessory; end
 
-require 'accessory/lens_path'
+require 'accessory/accessor'
+require 'accessory/accessors/subscript_accessor'
 
 ##
-# A Lens represents a {LensPath} bound to a specified subject document.
-# See {LensPath} for the general theory.
+# A Lens is a "free-floating" lens (i.e. not bound to a subject document.)
+# It serves as a container for {Accessor} instances, and represents the
+# traversal path one would take to get from a hypothetical subject document,
+# to a data value nested somewhere within it.
 #
-# A Lens can be used to traverse its subject document, using {get_in},
-# {put_in}, {pop_in}, etc.
+# A Lens can be used directly to traverse documents, using {get_in},
+# {put_in}, {pop_in}, etc. These methods take an explicit subject document to
+# traverse, rather than requiring that the Lens be bound to a document
+# first.
 #
-# Ordinarily, you don't create and hold onto a Lens, but rather you will
-# temporarily create Lenses in method-call chains when doing traversals.
+# As such, a Lens is reusable. A common use of a Lens is to access the
+# same deeply-nested traversal position within a large collection of subject
+# documents, e.g.:
 #
-# It may sometimes be useful to create a collection of Lenses and then "build
-# them up" by extending their LensPaths over various collection-passes, rather
-# than building up {LensPath}s and only binding them to subjects at the end.
+#    foo_bar_baz = Lens[:foo, :bar, :baz]
+#    docs.map{ |doc| foo_bar_baz.get_in(doc) }
 #
-# Lenses are created frozen. Methods that "extend" a Lens actually
-# create and return new derived Lenses.
+# A Lens can also be bound to a specific subject document to create a
+# {BoundLens}. See {BoundLens.on}.
+#
+# Lenses are created frozen. Methods that "extend" a Lens actually create and
+# return new derived Lenses.
 
 class Accessory::Lens
+  # Returns the empty (identity) Lens.
+  # @return [Lens] the empty (identity) Lens.
+  def self.empty
+    @empty_lens ||= (new([]).freeze)
+  end
 
-  # Creates a Lens that will traverse +subject+.
-  #
-  # @overload on(subject, lens_path)
-  #   Creates a Lens that will traverse +subject+ along +lens_path+.
-  #
-  #   @param subject [Object] the data-structure this Lens will traverse
-  #   @param lens_path [LensPath] the {LensPath} that will be used to
-  #     traverse +subject+
-  #
-  # @overload on(subject, *accessors)
-  #   Creates a Lens that will traverse +subject+ using an {LensPath} built
-  #   from +accessors+.
-  #
-  #   @param subject [Object] the data-structure this Lens will traverse
-  #   @param accessors [Array] the accessors for the new {LensPath}
-  def self.on(subject, *accessors)
-    lens_path =
-      if accessors.length == 1 && accessors[0].kind_of?(LensPath)
-        accessors[0]
-      else
-        Accessory::LensPath[*accessors]
-      end
-
-    self.new(subject, lens_path).freeze
+  # Returns a {Lens} containing the specified +accessors+.
+  # @return [Lens] a Lens containing the specified +accessors+.
+  def self.[](*accessors)
+    new(accessors).freeze
   end
 
   class << self
@@ -52,88 +45,195 @@ class Accessory::Lens
   end
 
   # @!visibility private
-  def initialize(subject, lens_path)
-    @subject = subject
-    @path = lens_path
+  def initialize(initial_parts)
+    @parts = []
+
+    for part in initial_parts
+      append_accessor!(part)
+    end
   end
-
-  # @return [LensPath] the +subject+ this Lens will traverse
-  attr_reader :subject
-
-  # @return [LensPath] the {LensPath} for this Lens
-  attr_reader :path
 
   # @!visibility private
-  def inspect
-    "#<Lens on=#{@subject.inspect} #{@path.inspect(format: :short)}>"
+  def to_a
+    @parts
   end
 
-  # Returns a new Lens resulting from appending +accessor+ to the receiver's
-  # {LensPath}.
-  #
-  # === See also:
-  # * {LensPath#then}
-  #
+  # @!visibility private
+  def inspect(format: :long)
+    parts_desc = @parts.map{ |part| part.inspect(format: :short) }.join(', ')
+    parts_desc = "[#{parts_desc}]"
+
+    case format
+    when :long
+      "#Lens#{parts_desc}"
+    when :short
+      parts_desc
+    end
+  end
+
+  # Returns a new {Lens} resulting from appending +accessor+ to the receiver.
   # @param accessor [Object] the accessor to append
-  # @return [LensPath] the new Lens, containing a new joined LensPath
+  # @return [Lens] the new joined Lens
   def then(accessor)
     d = self.dup
     d.instance_eval do
-      @path = @path.then(accessor)
+      @parts = @parts.dup
+      append_accessor!(accessor)
     end
     d.freeze
   end
 
-  # Returns a new Lens resulting from concatenating +other+ to the receiver's
-  # {LensPath}.
-  #
-  # === See also:
-  # * {LensPath#+}
-  #
-  # @param other [Object] an accessor, an +Array+ of accessors, or a {LensPath}
-  # @return [LensPath] the new Lens, containing a new joined LensPath
+  # Returns a new {Lens} resulting from concatenating +other+ to the end
+  # of the receiver.
+  # @param other [Object] an accessor, an +Array+ of accessors, or another Lens
+  # @return [Lens] the new joined Lens
   def +(other)
+    parts =
+      case other
+      when Accessory::Lens
+        other.to_a
+      when Array
+        other
+      else
+        [other]
+      end
+
     d = self.dup
     d.instance_eval do
-      @path = @path + other
+      for part in parts
+        append_accessor!(part)
+      end
     end
     d.freeze
   end
 
   alias_method :/, :+
 
-  # (see LensPath#get_in)
-  def get_in
-    @path.get_in(@subject)
+  # Traverses +subject+ using the chain of accessors held in this Lens,
+  # returning the discovered value.
+  #
+  # *Equivalent* in Elixir:  {https://hexdocs.pm/elixir/Kernel.html#get_in/2 +Kernel.get_in/2+}
+  #
+  # @return [Object] the value found after all traversals.
+  def get_in(subject)
+    if @parts.empty?
+      subject
+    else
+      get_in_step(subject, @parts)
+    end
   end
 
-  # (see LensPath#get_and_update_in)
-  def get_and_update_in(&mutator_fn)
-    @path.get_and_update_in(@subject, &mutator_fn)
-  end
-
-  # (see LensPath#update_in)
-  def update_in(&new_value_fn)
-    @path.update_in(@subject, &new_value_fn)
-  end
-
-  # (see LensPath#put_in)
-  def put_in(new_value)
-    @path.put_in(@subject, new_value)
-  end
-
-  # (see LensPath#pop_in)
-  def pop_in
-    @path.pop_in(@subject)
-  end
-end
-
-class Accessory::LensPath
-  # Returns a new {Lens} wrapping this LensPath, bound to the specified
-  # +subject+.
+  # Traverses +subject+ using the chain of accessors held in this Lens,
+  # modifying the final value at the end of the traversal chain using
+  # the passed +mutator_fn+, and returning the original targeted value(s)
+  # pre-modification.
+  #
+  # +mutator_fn+ must return one of two data "shapes":
+  # * a two-element +Array+, representing:
+  #   1. the value to surface as the "get" value of the traversal
+  #   2. the new value to replace at the traversal-position
+  # * the Symbol +:pop+ — which will remove the value from its parent, and
+  #   return it as-is.
+  #
+  # *Equivalent* in Elixir: {https://hexdocs.pm/elixir/Kernel.html#get_and_update_in/3 +Kernel.get_and_update_in/3+}
+  #
   # @param subject [Object] the data-structure to traverse
-  # @return [Lens] a new Lens that will traverse +subject+ using this LensPath
-  def on(subject)
-    Accessory::Lens.on(subject, self)
+  # @param mutator_fn [Proc] a block taking the original value derived from
+  #   traversing +subject+, and returning a modification operation.
+  # @return [Array] a two-element +Array+, consisting of
+  #   1. the _old_ value(s) found after all traversals, and
+  #   2. the updated +subject+
+  def get_and_update_in(subject, &mutator_fn)
+    if @parts.empty?
+      subject
+    else
+      get_and_update_in_step(subject, @parts, mutator_fn)
+    end
   end
+
+  # Traverses +subject+ using the chain of accessors held in this Lens,
+  # replacing the final value at the end of the traversal chain with the
+  # result from the passed +new_value_fn+.
+  #
+  # *Equivalent* in Elixir: {https://hexdocs.pm/elixir/Kernel.html#update_in/3 +Kernel.update_in/3+}
+  #
+  # @param subject [Object] the data-structure to traverse
+  # @param new_value_fn [Proc] a block taking the original value derived from
+  #   traversing +subject+, and returning a replacement value.
+  # @return [Array] a two-element +Array+, consisting of
+  #   1. the _old_ value(s) found after all traversals, and
+  #   2. the updated +subject+
+  def update_in(subject, &new_value_fn)
+    _, new_data = self.get_and_update_in(data){ |v| [nil, new_value_fn.call(v)] }
+    new_data
+  end
+
+  # Traverses +subject+ using the chain of accessors held in this Lens,
+  # replacing the final value at the end of the traversal chain with
+  # +new_value+.
+  #
+  # *Equivalent* in Elixir: {https://hexdocs.pm/elixir/Kernel.html#put_in/3 +Kernel.put_in/3+}
+  #
+  # @param subject [Object] the data-structure to traverse
+  # @param new_value [Object] a replacement value at the traversal position.
+  # @return [Object] the updated +subject+
+  def put_in(subject, new_value)
+    _, new_data = self.get_and_update_in(subject){ [nil, new_value] }
+    new_data
+  end
+
+  # Traverses +subject+ using the chain of accessors held in this Lens,
+  # removing the final value at the end of the traversal chain from its position
+  # within its parent container.
+  #
+  # *Equivalent* in Elixir: {https://hexdocs.pm/elixir/Kernel.html#pop_in/2 +Kernel.pop_in/2+}
+  #
+  # @param subject [Object] the data-structure to traverse
+  # @return [Object] the updated +subject+
+  def pop_in(subject)
+    self.get_and_update_in(subject){ :pop }
+  end
+
+  def append_accessor!(part)
+    accessor =
+      case part
+      when Accessory::Accessor
+        part
+      when Array
+        Accessory::SubscriptAccessor.new(part[0], default: part[1])
+      else
+        Accessory::SubscriptAccessor.new(part)
+      end
+
+    unless @parts.empty?
+      @parts.last.succ_default_data_constructor = accessor.default_data_constructor
+    end
+
+    @parts.push(accessor)
+  end
+  private :append_accessor!
+
+  def get_in_step(data, path)
+    step_accessor = path.first
+    rest_of_path = path[1..-1]
+
+    if rest_of_path.empty?
+      step_accessor.get(data)
+    else
+      step_accessor.get(data){ |v| get_in_step(v, rest_of_path) }
+    end
+  end
+  private :get_in_step
+
+  def get_and_update_in_step(data, path, mutator_fn)
+    step_accessor = path.first
+    rest_of_path = path[1..-1]
+
+    if rest_of_path.empty?
+      step_accessor.get_and_update(data, &mutator_fn)
+    else
+      step_accessor.get_and_update(data){ |v| get_and_update_in_step(v, rest_of_path, mutator_fn) }
+    end
+  end
+  private :get_and_update_in_step
 end

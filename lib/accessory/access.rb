@@ -11,8 +11,7 @@ require 'accessory/accessors/first_accessor'
 require 'accessory/accessors/last_accessor'
 
 ##
-# A set of convenient module-function helpers to use with
-# <tt>LensPath[...]</tt>.
+# A set of convenient module-function helpers to use with <tt>Lens[...]</tt>.
 #
 # These functions aren't very convenient unless you
 #
@@ -77,11 +76,11 @@ end
 
 ##
 # A set of convenient "fluent API" builder methods
-# that get mixed into {LensPath} and {Lens}.
+# that get mixed into {Lens} and {BoundLens}.
 #
 # These do the same thing as the {Access} helper of the same name, but
 # wrap the resulting accessor in a call to <tt>#then</tt>, deriving a new
-# {LensPath} or {Lens} from the addition of the accessor.
+# {Lens} or {BoundLens} from the addition of the accessor.
 
 module Accessory::Access::FluentHelpers
   # (see Accessory::SubscriptAccessor)
@@ -149,6 +148,6 @@ class Accessory::Lens
   include Accessory::Access::FluentHelpers
 end
 
-class Accessory::LensPath
+class Accessory::BoundLens
   include Accessory::Access::FluentHelpers
 end

@@ -9,22 +9,22 @@ module Accessory::TraversalPosition; end
 #
 # * An +EnumerableBeforeOffset+ with an <tt>.offset</tt> of <tt>0</tt>
 #   represents the position directly before the first result from
-#   <tt>#each</tt>, i.e. "the beginning." Using {LensPath#put_in} at this position
+#   <tt>#each</tt>, i.e. "the beginning." Using {Lens#put_in} at this position
 #   will _prepend_ to the +Enumerable+.
 #
 # * An +EnumerableBeforeOffset+ with an <tt>.offset</tt> equal to the
 #   <tt>#length</tt> of the +Enumerable+ (recognizable by
 #   <tt>EnumerableBeforeOffset#last?</tt> returning +true+) represents
 #   represents the position directly before the end of the enumeration,
-#   i.e. "the end" of the +Enumerable+. Using {LensPath#put_in} at this position
+#   i.e. "the end" of the +Enumerable+. Using {Lens#put_in} at this position
 #   will _append_ to the +Enumerable+.
 #
-# * In general, using {LensPath#put_in} with an +EnumerableBeforeOffset+ with an
+# * In general, using {Lens#put_in} with an +EnumerableBeforeOffset+ with an
 #   <tt>.offset</tt> of +n+ will insert an element _between_ elements
 #   <tt>n - 1</tt> and +n+ in the enumeration sequence.
 #
-# * Returning <tt>:pop</tt> from {LensPath#get_and_update_in} for an
-#   +EnumerableBeforeOffset+-terminated {LensPath} will have no effect, as
+# * Returning <tt>:pop</tt> from {Lens#get_and_update_in} for an
+#   +EnumerableBeforeOffset+-terminated {Lens} will have no effect, as
 #   you're removing an empty slice.
 
 class Accessory::TraversalPosition::EnumerableBeforeOffset

@@ -13,14 +13,14 @@ require 'accessory/traversal_position/enumerable_before_offset'
 # The +offset+ in this accessor has equivalent semantics to the offset in
 # <tt>Array#insert(offset, obj)</tt>.
 #
-# {BetwixtAccessor} can be used with {LensPath#put_in} to insert new
+# {BetwixtAccessor} can be used with {Lens#put_in} to insert new
 # elements into an Enumerable between the existing ones. If you want to extend
 # an +Enumerable+ as you would with <tt>#push</tt> or <tt>#unshift</tt>, this
 # accessor will have better behavior than using {SubscriptAccessor} would.
 #
 # *Aliases*
 # * {Access.betwixt}
-# * {Access::FluentHelpers#betwixt} (included in {LensPath} and {Lens})
+# * {Access::FluentHelpers#betwixt} (included in {Lens} and {BoundLens})
 #
 # <b>Default constructor</b> used by predecessor accessor
 #

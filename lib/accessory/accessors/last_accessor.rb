@@ -9,7 +9,7 @@ require 'accessory/accessor'
 #
 # *Aliases*
 # * {Access.last}
-# * {Access::FluentHelpers#last} (included in {LensPath} and {Lens})
+# * {Access::FluentHelpers#last} (included in {Lens} and {BoundLens})
 #
 # <b>Default constructor</b> used by predecessor accessor
 #

@@ -125,7 +125,7 @@ class Accessory::Accessor
   #
   # @param data [Enumerable] the data yielded by the predecessor accessor.
   # @param succ [Proc] a thunk to the successor accessor. When {get} is called
-  #   by a {LensPath}, this is passed implicitly.
+  #   by a {Lens}, this is passed implicitly.
   # @return [Object] the data to pass back to the predecessor accessor as a
   #   yield result.
   def get(data, &succ)
@@ -172,7 +172,7 @@ class Accessory::Accessor
   #
   # @param data [Enumerable] the data yielded by the predecessor accessor.
   # @param succ [Proc] a thunk to the successor accessor. When {get} is called
-  #   by a {LensPath}, this is passed implicitly.
+  #   by a {Lens}, this is passed implicitly.
   # @return [Object] the modification-command to pass back to the predecessor
   #   accessor as a yield result.
   def get_and_update(data, &succ)
@@ -209,7 +209,7 @@ class Accessory::Accessor
   # pass you as +data+ would be an Array.
   #
   # In that case, you can return `lambda{ Array.new }` here. This default
-  # constructor will be passed along the {LensPath} to the predecessor, which
+  # constructor will be passed along the {Lens} to the predecessor, which
   # will then use it in {traverse_or_default} if it was not configured with
   # an explicit default.
   #

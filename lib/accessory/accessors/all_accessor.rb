@@ -5,7 +5,7 @@ require 'accessory/accessor'
 #
 # *Aliases*
 # * {Access.all}
-# * {Access::FluentHelpers#all} (included in {LensPath} and {Lens})
+# * {Access::FluentHelpers#all} (included in {Lens} and {BoundLens})
 #
 # *Equivalents* in Elixir's {https://hexdocs.pm/elixir/Access.html +Access+} module
 # * {https://hexdocs.pm/elixir/Access.html#all/0 +Access.all/0+}

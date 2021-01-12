@@ -13,7 +13,7 @@ require 'accessory/accessor'
 #
 # *Aliases*
 # * {Access.attr}
-# * {Access::FluentHelpers#attr} (included in {LensPath} and {Lens})
+# * {Access::FluentHelpers#attr} (included in {Lens} and {BoundLens})
 #
 # <b>Default constructor</b> used by predecessor accessor
 #

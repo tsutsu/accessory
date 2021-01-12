@@ -6,7 +6,7 @@ require 'accessory/accessor'
 #
 # *Aliases*
 # * {Access.filter}
-# * {Access::FluentHelpers#filter} (included in {LensPath} and {Lens})
+# * {Access::FluentHelpers#filter} (included in {Lens} and {BoundLens})
 #
 # *Equivalents* in Elixir's {https://hexdocs.pm/elixir/Access.html +Access+} module
 # * {https://hexdocs.pm/elixir/Access.html#filter/1 +Access.filter/1+}

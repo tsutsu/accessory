@@ -7,9 +7,10 @@ require 'accessory/accessor'
 #
 # *Aliases*
 # * {Access.subscript}
-# * {Access::FluentHelpers#subscript} (included in {LensPath} and {Lens})
-# * {Access::FluentHelpers#[]} (included in {LensPath} and {Lens})
-# * just passing a +key+ will also work, when +not(key.kind_of?(Accessor))+ (this is a special case in {LensPath#initialize})
+# * {Access::FluentHelpers#subscript} (included in {Lens} and {BoundLens})
+# * {Access::FluentHelpers#[]} (included in {Lens} and {BoundLens})
+# * just passing a +key+ will also work, when +not(key.kind_of?(Accessor))+
+#   (this is a special case in {Lens#initialize})
 #
 # *Equivalents* in Elixir's {https://hexdocs.pm/elixir/Access.html +Access+} module
 # * {https://hexdocs.pm/elixir/Access.html#at/1 +Access.at/1+}
