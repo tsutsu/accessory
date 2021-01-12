@@ -3,6 +3,30 @@ module Accessory; end
 require 'accessory/accessor'
 require 'accessory/accessors/subscript_accessor'
 
+##
+# A LensPath is a "free-floating" lens (i.e. not bound to a subject document.)
+# It serves as a container for {Accessor} instances, and represents the
+# traversal path one would take to get from a hypothetical subject document,
+# to a data value nested somewhere within it.
+#
+# A LensPath can be used directly to traverse documents, using {get_in},
+# {put_in}, {pop_in}, etc. These methods take an explicit subject document to
+# traverse, rather than requiring that the LensPath be bound to a document
+# first.
+#
+# As such, a LensPath is reusable. A common use of a LensPath is to access the
+# same deeply-nested traversal position within a large collection of subject
+# documents, e.g.:
+#
+#    foo_bar_baz = LensPath[:foo, :bar, :baz]
+#    docs.map{ |doc| foo_bar_baz.get_in(doc) }
+#
+# A LensPath can also be bound to a specific subject document to create a
+# {Lens}. See {Lens.on}.
+#
+# LensPaths are created frozen. Methods that "extend" a LensPath actually
+# create and return new derived LensPaths.
+
 class Accessory::LensPath
   # Returns the empty (identity) LensPath.
   # @return [LensPath] the empty (identity) LensPath.

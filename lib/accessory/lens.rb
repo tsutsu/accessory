@@ -2,6 +2,23 @@ module Accessory; end
 
 require 'accessory/lens_path'
 
+##
+# A Lens represents a {LensPath} bound to a specified subject document.
+# See {LensPath} for the general theory.
+#
+# A Lens can be used to traverse its subject document, using {get_in},
+# {put_in}, {pop_in}, etc.
+#
+# Ordinarily, you don't create and hold onto a Lens, but rather you will
+# temporarily create Lenses in method-call chains when doing traversals.
+#
+# It may sometimes be useful to create a collection of Lenses and then "build
+# them up" by extending their LensPaths over various collection-passes, rather
+# than building up {LensPath}s and only binding them to subjects at the end.
+#
+# Lenses are created frozen. Methods that "extend" a Lens actually
+# create and return new derived Lenses.
+
 class Accessory::Lens
 
   # Creates a Lens that will traverse +subject+.
