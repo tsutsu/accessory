@@ -41,7 +41,7 @@ class Accessory::Lens
       if accessors.length == 1 && accessors[0].kind_of?(LensPath)
         accessors[0]
       else
-        LensPath[*accessors]
+        Accessory::LensPath[*accessors]
       end
 
     self.new(subject, lens_path).freeze
