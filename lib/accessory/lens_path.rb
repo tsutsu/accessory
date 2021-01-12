@@ -187,7 +187,7 @@ class Accessory::LensPath
       end
 
     unless @parts.empty?
-      @parts.last.make_default_fn = accessor.default_fn_for_previous_step
+      @parts.last.succ_default_data_constructor = accessor.default_data_constructor
     end
 
     @parts.push(accessor)

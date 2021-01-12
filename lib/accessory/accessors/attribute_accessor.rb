@@ -47,7 +47,7 @@ class Accessory::AttributeAccessor < Accessory::Accessor
   end
 
   # @!visibility private
-  def default_fn_for_previous_step
+  def default_data_constructor
     lambda do
       require 'ostruct'
       OpenStruct.new
@@ -55,7 +55,7 @@ class Accessory::AttributeAccessor < Accessory::Accessor
   end
 
   # @!visibility private
-  def value_from(data)
+  def traverse(data)
     data.send(@getter_method_name)
   end
 

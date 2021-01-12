@@ -33,12 +33,12 @@ class Accessory::InstanceVariableAccessor < Accessory::Accessor
   end
 
   # @!visibility private
-  def default_fn_for_previous_step
+  def default_data_constructor
     lambda{ Object.new }
   end
 
   # @!visibility private
-  def value_from(data)
+  def traverse(data)
     data.instance_variable_get(@ivar_name)
   end
 

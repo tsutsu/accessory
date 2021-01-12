@@ -17,7 +17,7 @@ require 'accessory/accessor'
 
 class Accessory::LastAccessor < Accessory::Accessor
   # @!visibility private
-  def default_fn_for_previous_step
+  def default_data_constructor
     lambda{ Array.new }
   end
 
@@ -25,7 +25,7 @@ class Accessory::LastAccessor < Accessory::Accessor
   def inspect_args; nil; end
 
   # @!visibility private
-  def value_from(data)
+  def traverse(data)
     data.last
   end
 

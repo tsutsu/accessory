@@ -34,7 +34,7 @@ class Accessory::FilterAccessor < Accessory::Accessor
   end
 
   # @!visibility private
-  def default_fn_for_previous_step
+  def default_data_constructor
     lambda{ Array.new }
   end
 

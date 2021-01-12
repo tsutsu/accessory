@@ -1,5 +1,5 @@
 require 'accessory/accessor'
-require 'accessory/array_cursor_position'
+require 'accessory/traversal_position/enumerable_before_offset'
 
 ##
 # Traverses the positions "between" the elements of an +Enumerable+, including
@@ -18,7 +18,7 @@ require 'accessory/array_cursor_position'
 
 class Accessory::BetweenEachAccessor < Accessory::Accessor
   # @!visibility private
-  def default_fn_for_previous_step
+  def default_data_constructor
     lambda{ Array.new }
   end
 
@@ -26,7 +26,7 @@ class Accessory::BetweenEachAccessor < Accessory::Accessor
   def inspect_args; nil; end
 
   # @!visibility private
-  def value_from(data)
+  def traverse(data)
     data_len = data.length
 
     positions = [
@@ -36,15 +36,15 @@ class Accessory::BetweenEachAccessor < Accessory::Accessor
     ]
 
     positions.transpose.map do |(i, b, a)|
-      Accessory::ArrayCursorPosition.new(i, b, a, is_first: i == 0, is_last: i == data_len)
+      Accessory::TraversalPosition::EnumerableBeforeOffset.new(i, b, a, is_first: i == 0, is_last: i == data_len)
     end
   end
 
-  # Feeds {ArrayCursorPosition}s representing the positions between the elements
-  # of +data+ down the accessor chain.
+  # Feeds {TraversalPosition::EnumerableBeforeOffset}s representing the
+  # positions between the elements of +data+ down the accessor chain.
   #
   # @param data [Enumerable] the +Enumerable+ to iterate through
-  # @return [Array] the generated {ArrayCursorPosition}s
+  # @return [Array] the generated {TraversalPosition::EnumerableBeforeOffset}s
   def get(data)
     positions = value_or_default(data || [])
 
@@ -55,8 +55,9 @@ class Accessory::BetweenEachAccessor < Accessory::Accessor
     end
   end
 
-  # Feeds {ArrayCursorPosition}s representing the positions between the elements
-  # of +data+ down the accessor chain, manipulating +data+ using the results.
+  # Feeds {TraversalPosition::EnumerableBeforeOffset}s representing the
+  # positions between the elements of +data+ down the accessor chain,
+  # manipulating +data+ using the results.
   #
   # If a new element is returned up the accessor chain, the element is inserted
   # between the existing elements.
@@ -64,7 +65,9 @@ class Accessory::BetweenEachAccessor < Accessory::Accessor
   # If +:pop+ is returned up the accessor chain, no new element is added.
   #
   # @param data [Enumerable] the +Enumerable+ to iterate through
-  # @return [Array] a two-element array containing 1. the {ArrayCursorPosition}s; and 2. the new {data}
+  # @return [Array] a two-element array containing
+  #   1. the {TraversalPosition::EnumerableBeforeOffset}s
+  #   2. the new {data}
   def get_and_update(data)
     results = []
     new_data = []
