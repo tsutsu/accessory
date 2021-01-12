@@ -3,11 +3,31 @@ module Accessory; end
 require 'accessory/lens_path'
 
 class Accessory::Lens
-  # Creates a Lens that will traverse +subject+ along +lens_path+.
-  # @param subject [Object] the data-structure this Lens will traverse
-  # @param lens_path [LensPath] the {LensPath} that will be used to traverse +subject+
-  def self.on(subject, lens_path: Accessory::LensPath.empty)
-    self.new(subject, path).freeze
+
+  # Creates a Lens that will traverse +subject+.
+  #
+  # @overload on(subject, lens_path)
+  #   Creates a Lens that will traverse +subject+ along +lens_path+.
+  #
+  #   @param subject [Object] the data-structure this Lens will traverse
+  #   @param lens_path [LensPath] the {LensPath} that will be used to
+  #     traverse +subject+
+  #
+  # @overload on(subject, *accessors)
+  #   Creates a Lens that will traverse +subject+ using an {LensPath} built
+  #   from +accessors+.
+  #
+  #   @param subject [Object] the data-structure this Lens will traverse
+  #   @param accessors [Array] the accessors for the new {LensPath}
+  def self.on(subject, *accessors)
+    lens_path =
+      if accessors.length == 1 && accessors[0].kind_of?(LensPath)
+        accessors[0]
+      else
+        LensPath[*accessors]
+      end
+
+    self.new(subject, lens_path).freeze
   end
 
   class << self
@@ -97,6 +117,6 @@ class Accessory::LensPath
   # @param subject [Object] the data-structure to traverse
   # @return [Lens] a new Lens that will traverse +subject+ using this LensPath
   def on(subject)
-    Accessory::Lens.on(subject, lens_path: self)
+    Accessory::Lens.on(subject, self)
   end
 end

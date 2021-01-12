@@ -7,8 +7,8 @@ require 'accessory/access'
 
 module Accessory
   refine ::Object do
-    def lens
-      ::Accessory::Lens.on(self)
+    def lens(...)
+      ::Accessory::Lens.on(self, ...)
     end
   end
 end

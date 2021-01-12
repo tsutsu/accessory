@@ -158,6 +158,17 @@ using Accessory
 {}.lens[:foo][:bar].put_in(5) # => {:foo=>{:bar=>5}}
 ```
 
+The `.lens` method also accepts additional variadic arguments, representing either a `LensPath` or a list of accessors to use to construct one:
+
+```ruby
+using Accessory
+
+{}.lens(:foo, :bar).put_in(5) # => {:foo=>{:bar=>5}}
+
+foo_bar = LensPath[:foo, :bar]
+{}.lens(foo_bar).put_in(3) # => {:foo=>{:bar=>3}}
+```
+
 ### Default inference for intermediate accessors
 
 Every accessor knows how to construct a valid, empty value of the type it expects to receive as input. For example, the `AllAccessor` expects to operate on `Enumerables`, and so defines a default constructor of `Array.new`.
