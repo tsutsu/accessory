@@ -22,11 +22,11 @@ module Accessory; end
 # * {Accessor#default_data_constructor}
 
 class Accessory::Accessor
-  # @!visibility private
   DEFAULT_NOT_SET_SENTINEL = :"98e47971-e708-42ca-bee7-0c62fe5e11c9"
+  private_constant :DEFAULT_NOT_SET_SENTINEL
 
-  # @!visibility private
   TERMINAL_DEFAULT_FN = lambda{ nil }
+  private_constant :TERMINAL_DEFAULT_FN
 
   # @!visibility private
   def initialize(default = nil)
@@ -59,6 +59,7 @@ class Accessory::Accessor
 
   # @!visibility private
   HIDDEN_IVARS = [:@default_value, :@succ_default_data_constructor]
+  private_constant :HIDDEN_IVARS
 
   # @!visibility private
   def inspect_args

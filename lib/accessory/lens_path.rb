@@ -76,17 +76,11 @@ class Accessory::LensPath
   # @return [LensPath] the new joined LensPath
   def then(accessor)
     d = self.dup
-    d.append_accessor!(accessor)
-    d.freeze
-  end
-
-  # @!visibility private
-  def dup
-    d = super
     d.instance_eval do
       @parts = @parts.dup
+      append_accessor!(accessor)
     end
-    d
+    d.freeze
   end
 
   # Returns a new {LensPath} resulting from concatenating +other+ to the end
@@ -105,8 +99,10 @@ class Accessory::LensPath
       end
 
     d = self.dup
-    for part in parts
-      d.append_accessor!(part)
+    d.instance_eval do
+      for part in parts
+        append_accessor!(part)
+      end
     end
     d.freeze
   end
@@ -198,7 +194,6 @@ class Accessory::LensPath
     self.get_and_update_in(subject){ :pop }
   end
 
-  protected
   def append_accessor!(part)
     accessor =
       case part
@@ -216,8 +211,8 @@ class Accessory::LensPath
 
     @parts.push(accessor)
   end
+  private :append_accessor!
 
-  private
   def get_in_step(data, path)
     step_accessor = path.first
     rest_of_path = path[1..-1]
@@ -228,8 +223,8 @@ class Accessory::LensPath
       step_accessor.get(data){ |v| get_in_step(v, rest_of_path) }
     end
   end
+  private :get_in_step
 
-  private
   def get_and_update_in_step(data, path, mutator_fn)
     step_accessor = path.first
     rest_of_path = path[1..-1]
@@ -240,4 +235,5 @@ class Accessory::LensPath
       step_accessor.get_and_update(data){ |v| get_and_update_in_step(v, rest_of_path, mutator_fn) }
     end
   end
+  private :get_and_update_in_step
 end
