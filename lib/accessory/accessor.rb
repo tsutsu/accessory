@@ -19,7 +19,7 @@ module Accessory; end
 # info):
 #
 # * {Accessor#traverse}
-# * {Accessor#default_data_constructor}
+# * {Accessor#ensure_valid}
 
 class Accessory::Accessor
   TERMINAL_DEFAULT_FN = lambda{ nil }
@@ -78,16 +78,13 @@ class Accessory::Accessor
   # call <tt>traverse_or_default(data)</tt> within your implementation to safely
   # get a traversal-result to operate on.
   #
-  # This method will return +nil+ if the input-data is +nil+, _without_ calling
-  # your {traverse} callback. This means that accessors that use
-  # {traverse_or_default} will _forward_ +nil+ traversal-results along the chain
-  # without being confused by them.
-  #
-  # If your {traverse} callback returns <tt>:error</tt>, a default value will
-  # be used. This is either the +default+ passed to {initialize} by your
-  # implementation calling <tt>super(default)</tt>; or it's the result of
-  # calling {default_data_constructor} on the successor-accessor in the accessor
-  # chain.
+  # The value returned by your {traverse} callback will be validated by your
+  # calling the {ensure_valid} callback of the _successor accessor_ in the Lens
+  # path. {ensure_valid} will replace any value it considers invalid with a
+  # reasonable default. This means you don't need to worry about what will
+  # happen if your traversal doesn't find a value and so returns +nil+. The
+  # successor's {ensure_valid} will replace that +nil+ with a value that works
+  # for it.
   def traverse_or_default(data)
     traversal_result = traverse(data) || @default_value
 
