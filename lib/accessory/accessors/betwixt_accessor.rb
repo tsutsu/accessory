@@ -64,7 +64,7 @@ class Accessory::BetwixtAccessor < Accessory::Accessor
   # @param data [Enumerable] the +Enumerable+ to traverse into
   # @return [Array] the generated {TraversalPosition::EnumerableBeforeOffset}
   def get(data)
-    pos = value_or_default(data || [])
+    pos = traverse_or_default(data || [])
 
     if block_given?
       yield(pos)
@@ -87,7 +87,7 @@ class Accessory::BetwixtAccessor < Accessory::Accessor
   #   1. the generated {TraversalPosition::EnumerableBeforeOffset}
   #   2. the new {data}
   def get_and_update(data)
-    pos = value_or_default(data || [])
+    pos = traverse_or_default(data || [])
 
     case yield(pos)
     in [result, new_value]

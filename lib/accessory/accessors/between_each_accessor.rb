@@ -46,7 +46,7 @@ class Accessory::BetweenEachAccessor < Accessory::Accessor
   # @param data [Enumerable] the +Enumerable+ to iterate through
   # @return [Array] the generated {TraversalPosition::EnumerableBeforeOffset}s
   def get(data)
-    positions = value_or_default(data || [])
+    positions = traverse_or_default(data || [])
 
     if block_given?
       positions.map{ |rec| yield(rec) }
@@ -72,7 +72,7 @@ class Accessory::BetweenEachAccessor < Accessory::Accessor
     results = []
     new_data = []
 
-    positions = value_or_default(data || [])
+    positions = traverse_or_default(data || [])
 
     positions.each do |pos|
       case yield(pos)

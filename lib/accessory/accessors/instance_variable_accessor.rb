@@ -47,7 +47,7 @@ class Accessory::InstanceVariableAccessor < Accessory::Accessor
   # @param data [Object] the object to traverse
   # @return [Object] the value derived from the rest of the accessor chain
   def get(data)
-    value = value_or_default(data)
+    value = traverse_or_default(data)
 
     if block_given?
       yield(value)
@@ -67,7 +67,7 @@ class Accessory::InstanceVariableAccessor < Accessory::Accessor
   # @param data [Object] the object to traverse
   # @return [Array] a two-element array containing 1. the original value found; and 2. the result value from the accessor chain
   def get_and_update(data)
-    value = value_or_default(data)
+    value = traverse_or_default(data)
 
     case yield(value)
     in [result, new_value]
