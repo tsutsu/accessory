@@ -15,7 +15,7 @@ require 'accessory/accessor'
 #
 # * +Array.new+
 
-class Accessory::FilterAccessor < Accessory::Accessor
+class Accessory::Accessors::FilterAccessor < Accessory::Accessor
   # Returns a new instance of {FilterAccessor}.
   #
   # The predicate function may be passed in as either a positional argument,

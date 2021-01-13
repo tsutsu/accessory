@@ -1,6 +1,3 @@
-##
-#
-
 module Accessory; end
 
 require 'accessory/version'

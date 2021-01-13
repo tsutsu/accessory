@@ -211,3 +211,5 @@ class Accessory::Accessor
 
   # @!endgroup
 end
+
+module Accessory::Accessors; end

@@ -18,59 +18,59 @@ require 'accessory/accessors/last_accessor'
 #    include Accessory
 
 module Accessory::Access
-  # (see Accessory::SubscriptAccessor)
+  # (see Accessory::Accessors::SubscriptAccessor)
   def self.subscript(...)
-    Accessory::SubscriptAccessor.new(...)
+    Accessory::Accessors::SubscriptAccessor.new(...)
   end
 
-  # (see Accessory::AttributeAccessor)
+  # (see Accessory::Accessors::AttributeAccessor)
   def self.attr(...)
-    Accessory::AttributeAccessor.new(...)
+    Accessory::Accessors::AttributeAccessor.new(...)
   end
 
-  # (see Accessory::InstanceVariableAccessor)
+  # (see Accessory::Accessors::InstanceVariableAccessor)
   def self.ivar(...)
-    Accessory::InstanceVariableAccessor.new(...)
+    Accessory::Accessors::InstanceVariableAccessor.new(...)
   end
 
-  # (see Accessory::BetwixtAccessor)
+  # (see Accessory::Accessors::BetwixtAccessor)
   def self.betwixt(...)
-    Accessory::BetwixtAccessor.new(...)
+    Accessory::Accessors::BetwixtAccessor.new(...)
   end
 
-  # Alias for +Accessory::Access.betwixt(0)+. See {Access.betwixt}
+  # Alias for +Accessory::Accessors::Access.betwixt(0)+. See {Access.betwixt}
   def self.before_first
     self.betwixt(0)
   end
 
-  # Alias for +Accessory::Access.betwixt(-1)+. See {Access.betwixt}
+  # Alias for +Accessory::Accessors::Access.betwixt(-1)+. See {Access.betwixt}
   def self.after_last
     self.betwixt(-1)
   end
 
-  # (see Accessory::BetweenEachAccessor)
+  # (see Accessory::Accessors::BetweenEachAccessor)
   def self.between_each
-    Accessory::BetweenEachAccessor.new
+    Accessory::Accessors::BetweenEachAccessor.new
   end
 
-  # (see Accessory::AllAccessor)
+  # (see Accessory::Accessors::AllAccessor)
   def self.all
-    Accessory::AllAccessor.new
+    Accessory::Accessors::AllAccessor.new
   end
 
-  # (see Accessory::FirstAccessor)
+  # (see Accessory::Accessors::FirstAccessor)
   def self.first
-    Accessory::FirstAccessor.new
+    Accessory::Accessors::FirstAccessor.new
   end
 
-  # (see Accessory::LastAccessor)
+  # (see Accessory::Accessors::LastAccessor)
   def self.last
-    Accessory::LastAccessor.new
+    Accessory::Accessors::LastAccessor.new
   end
 
-  # (see Accessory::FilterAccessor)
+  # (see Accessory::Accessors::FilterAccessor)
   def self.filter(&pred)
-    Accessory::FilterAccessor.new(pred)
+    Accessory::Accessors::FilterAccessor.new(pred)
   end
 end
 
@@ -83,29 +83,29 @@ end
 # {Lens} or {BoundLens} from the addition of the accessor.
 
 module Accessory::Access::FluentHelpers
-  # (see Accessory::SubscriptAccessor)
+  # (see Accessory::Accessors::SubscriptAccessor)
   def subscript(...)
-    self.then(Accessory::SubscriptAccessor.new(...))
+    self.then(Accessory::Accessors::SubscriptAccessor.new(...))
   end
 
   # Alias for {#subscript}
   def [](...)
-    self.then(Accessory::SubscriptAccessor.new(...))
+    self.then(Accessory::Accessors::SubscriptAccessor.new(...))
   end
 
-  # (see Accessory::AttributeAccessor)
+  # (see Accessory::Accessors::AttributeAccessor)
   def attr(...)
-    self.then(Accessory::AttributeAccessor.new(...))
+    self.then(Accessory::Accessors::AttributeAccessor.new(...))
   end
 
-  # (see Accessory::InstanceVariableAccessor)
+  # (see Accessory::Accessors::InstanceVariableAccessor)
   def ivar(...)
-    self.then(Accessory::InstanceVariableAccessor.new(...))
+    self.then(Accessory::Accessors::InstanceVariableAccessor.new(...))
   end
 
-  # (see Accessory::BetwixtAccessor)
+  # (see Accessory::Accessors::BetwixtAccessor)
   def betwixt(...)
-    self.then(Accessory::BetwixtAccessor.new(...))
+    self.then(Accessory::Accessors::BetwixtAccessor.new(...))
   end
 
   # Alias for +#betwixt(0)+. See {#betwixt}
@@ -118,29 +118,29 @@ module Accessory::Access::FluentHelpers
     self.betwixt(-1)
   end
 
-  # (see Accessory::BetweenEachAccessor)
+  # (see Accessory::Accessors::BetweenEachAccessor)
   def between_each
-    self.then(Accessory::BetweenEachAccessor.new)
+    self.then(Accessory::Accessors::BetweenEachAccessor.new)
   end
 
-  # (see Accessory::AllAccessor)
+  # (see Accessory::Accessors::AllAccessor)
   def all
-    self.then(Accessory::AllAccessor.new)
+    self.then(Accessory::Accessors::AllAccessor.new)
   end
 
-  # (see Accessory::FirstAccessor)
+  # (see Accessory::Accessors::FirstAccessor)
   def first
-    self.then(Accessory::FirstAccessor.new)
+    self.then(Accessory::Accessors::FirstAccessor.new)
   end
 
-  # (see Accessory::LastAccessor)
+  # (see Accessory::Accessors::LastAccessor)
   def last
-    self.then(Accessory::LastAccessor.new)
+    self.then(Accessory::Accessors::LastAccessor.new)
   end
 
-  # (see Accessory::FilterAccessor)
+  # (see Accessory::Accessors::FilterAccessor)
   def filter(&pred)
-    self.then(Accessory::FilterAccessor.new(pred))
+    self.then(Accessory::Accessors::FilterAccessor.new(pred))
   end
 end
 

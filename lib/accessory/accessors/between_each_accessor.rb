@@ -16,7 +16,7 @@ require 'accessory/traversal_position/enumerable_before_offset'
 #
 # * +Array.new+
 
-class Accessory::BetweenEachAccessor < Accessory::Accessor
+class Accessory::Accessors::BetweenEachAccessor < Accessory::Accessor
   # @!visibility private
   def ensure_valid(traversal_result)
     if traversal_result.kind_of?(Enumerable)

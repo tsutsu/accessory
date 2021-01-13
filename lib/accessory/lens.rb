@@ -200,9 +200,9 @@ class Accessory::Lens
       when Accessory::Accessor
         part
       when Array
-        Accessory::SubscriptAccessor.new(part[0], default: part[1])
+        Accessory::Accessors::SubscriptAccessor.new(part[0], default: part[1])
       else
-        Accessory::SubscriptAccessor.new(part)
+        Accessory::Accessors::SubscriptAccessor.new(part)
       end
 
     unless @parts.empty?

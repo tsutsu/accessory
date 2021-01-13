@@ -26,7 +26,7 @@ require 'accessory/traversal_position/enumerable_before_offset'
 #
 # * +Array.new+
 
-class Accessory::BetwixtAccessor < Accessory::Accessor
+class Accessory::Accessors::BetwixtAccessor < Accessory::Accessor
   # @param offset [Integer] the cursor position (i.e. the index of the element after the cursor)
   # @param default [Object] the default to use if the predecessor accessor passes +nil+ data
   def initialize(offset, default: nil)

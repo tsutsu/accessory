@@ -14,7 +14,7 @@ require 'accessory/accessor'
 #
 # * +Object.new+
 
-class Accessory::InstanceVariableAccessor < Accessory::Accessor
+class Accessory::Accessors::InstanceVariableAccessor < Accessory::Accessor
   # @param ivar_name [Symbol] the instance-variable name
   # @param default [Object] the default to use if the predecessor accessor passes +nil+ data
   def initialize(ivar_name, default: nil)

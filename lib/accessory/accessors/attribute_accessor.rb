@@ -19,7 +19,7 @@ require 'accessory/accessor'
 #
 # * +OpenStruct.new+
 
-class Accessory::AttributeAccessor < Accessory::Accessor
+class Accessory::Accessors::AttributeAccessor < Accessory::Accessor
   # @param attr_name [Symbol] the attribute name (i.e. name of the getter method)
   # @param default [Object] the default to use if the predecessor accessor passes +nil+ data
   def initialize(attr_name, default: nil)

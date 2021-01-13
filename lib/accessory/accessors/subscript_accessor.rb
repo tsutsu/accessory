@@ -31,7 +31,7 @@ require 'accessory/accessor'
 #
 # Other accessors ({FirstAccessor}, {BetwixtAccessor}, etc.) may fit your expectations more closely for +Array+ traversal.
 
-class Accessory::SubscriptAccessor < Accessory::Accessor
+class Accessory::Accessors::SubscriptAccessor < Accessory::Accessor
   # @!visibility private
   def initialize(key, **kwargs)
     super(**kwargs)

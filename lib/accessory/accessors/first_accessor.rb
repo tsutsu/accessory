@@ -15,7 +15,7 @@ require 'accessory/accessor'
 #
 # * +Array.new+
 
-class Accessory::FirstAccessor < Accessory::Accessor
+class Accessory::Accessors::FirstAccessor < Accessory::Accessor
   # @!visibility private
   def ensure_valid(traversal_result)
     if traversal_result.kind_of?(Enumerable)
