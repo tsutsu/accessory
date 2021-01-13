@@ -206,7 +206,7 @@ class Accessory::Lens
       end
 
     unless @parts.empty?
-      @parts.last.succ_default_data_constructor = accessor.default_data_constructor
+      @parts.last.successor = accessor
     end
 
     @parts.push(accessor)

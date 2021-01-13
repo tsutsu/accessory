@@ -22,16 +22,12 @@ module Accessory; end
 # * {Accessor#default_data_constructor}
 
 class Accessory::Accessor
-  DEFAULT_NOT_SET_SENTINEL = :"98e47971-e708-42ca-bee7-0c62fe5e11c9"
-  private_constant :DEFAULT_NOT_SET_SENTINEL
-
   TERMINAL_DEFAULT_FN = lambda{ nil }
   private_constant :TERMINAL_DEFAULT_FN
 
   # @!visibility private
-  def initialize(default = nil)
-    @default_value = default || DEFAULT_NOT_SET_SENTINEL
-    @succ_default_data_constructor = TERMINAL_DEFAULT_FN
+  def initialize(default_value = nil)
+    @default_value = default_value
   end
 
   # @!visibility private
@@ -58,7 +54,7 @@ class Accessory::Accessor
   end
 
   # @!visibility private
-  HIDDEN_IVARS = [:@default_value, :@succ_default_data_constructor]
+  HIDDEN_IVARS = [:@default_value, :@successor]
   private_constant :HIDDEN_IVARS
 
   # @!visibility private
@@ -70,7 +66,7 @@ class Accessory::Accessor
   end
 
   # @!visibility private
-  attr_accessor :succ_default_data_constructor
+  attr_accessor :successor
 
   # @!group Helpers
 
@@ -93,17 +89,12 @@ class Accessory::Accessor
   # calling {default_data_constructor} on the successor-accessor in the accessor
   # chain.
   def traverse_or_default(data)
-    return nil if data.nil?
+    traversal_result = traverse(data) || @default_value
 
-    case traverse(data)
-    in [:ok, traversal_result]
+    if @successor
+      @successor.ensure_valid(traversal_result)
+    else
       traversal_result
-    in :error
-      if DEFAULT_NOT_SET_SENTINEL.equal?(@default_value)
-        @succ_default_data_constructor.call
-      else
-        @default_value
-      end
     end
   end
 
@@ -188,35 +179,36 @@ class Accessory::Accessor
   # traversal-results.
   #
   # This method can assume that +data+ is a valid receiver for the traversal
-  # it performs. {traverse_or_default} takes care of feeding in a default +data+ in
-  # the case where the predecessor passed invalid data.
+  # it performs. {traverse_or_default} takes care of feeding in a default +data+
+  # in the case where the predecessor passed invalid data.
   #
   # @param data [Object] the object to be traversed
-  # @return [Object]
-  #   * <tt>[:ok, traversal_results]</tt> if traversal succeeds
-  #   * +:error+ if traversal fails
+  # @return [Object] the result of traversal
   def traverse(data)
     raise NotImplementedError, "Accessor subclass #{self.class} must implement #traverse to use #traverse_or_default"
   end
 
-  # Constructs a default value; called by {traverse_or_default}.
+  # Ensures that the predecessor accessor's traversal result is one this
+  # accessor can operate on; called by {traverse_or_default}.
   #
-  # Returns a default constructor Proc for the {traverse_or_default} call in
-  # the *predecessor* accessor to use.
+  # This callback should validate that the +traversal_result+ is one that can
+  # be traversed by the traversal-method of this accessor. If it can, the
+  # +traversal_result+ should be returned unchanged. If it cannot, an object
+  # that _can_ be traversed should be returned instead.
+  #
   #
   # For example, if your accessor operates on +Enumerable+ values (like
-  # {AllAccessor}), then a useful default for the predecessor accessor to
-  # pass you as +data+ would be an Array.
+  # {AllAccessor}), then this method should validate that the +traversal_result+
+  # is +Enumerable+; and, if it isn't, return something that is — e.g. an empty
+  # +Array+.
   #
-  # In that case, you can return `lambda{ Array.new }` here. This default
-  # constructor will be passed along the {Lens} to the predecessor, which
-  # will then use it in {traverse_or_default} if it was not configured with
-  # an explicit default.
+  # This logic is used to replace invalid intermediate values (e.g. `nil`s and
+  # scalars) with containers during {Lens#put_in} et al.
   #
-  # @return [Proc] a Proc that, when called, produces a default traversal-result
-  def default_data_constructor
+  # @return [Object] a now-valid traversal result
+  def ensure_valid(traversal_result)
     lambda do
-      raise NotImplementedError, "Accessor subclass #{self.class} must implement #default_data_constructor to allow chain-predecessor to use #traverse_or_default"
+      raise NotImplementedError, "Accessor subclass #{self.class} must implement #ensure_valid to allow chain-predecessor to use #traverse_or_default"
     end
   end
 

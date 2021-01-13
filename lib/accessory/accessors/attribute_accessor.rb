@@ -47,8 +47,10 @@ class Accessory::AttributeAccessor < Accessory::Accessor
   end
 
   # @!visibility private
-  def default_data_constructor
-    lambda do
+  def ensure_valid(traversal_result)
+    if traversal_result
+      traversal_result
+    else
       require 'ostruct'
       OpenStruct.new
     end

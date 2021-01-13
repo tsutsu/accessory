@@ -40,21 +40,30 @@ class Accessory::BetwixtAccessor < Accessory::Accessor
   end
 
   # @!visibility private
-  def default_data_constructor
-    lambda{ Array.new }
+  def ensure_valid(traversal_result)
+    if traversal_result.kind_of?(Enumerable)
+      traversal_result
+    else
+      []
+    end
   end
 
   # @!visibility private
   def traverse(data)
-    data_len = data.length
+    nil
+    # return :error unless data.kind_of?(Enumerable)
 
-    Accessory::TraversalPosition::EnumerableBeforeOffset.new(
-      @offset,
-      (@offset > 0) ? data[@offset - 1] : nil,
-      (@offset < (data_len - 1)) ? data[@offset + 1] : nil,
-      is_first: @offset == 0,
-      is_last: @offset == data_len
-    )
+    # data_len = data.length
+
+    # ebo = Accessory::TraversalPosition::EnumerableBeforeOffset.new(
+    #   @offset,
+    #   (@offset > 0) ? data[@offset - 1] : nil,
+    #   (@offset < (data_len - 1)) ? data[@offset + 1] : nil,
+    #   is_first: @offset == 0,
+    #   is_last: @offset == data_len
+    # )
+
+    # [:ok, ebo]
   end
 
   # Feeds a {TraversalPosition::EnumerableBeforeOffset} representing the

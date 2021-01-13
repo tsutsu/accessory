@@ -33,8 +33,8 @@ class Accessory::InstanceVariableAccessor < Accessory::Accessor
   end
 
   # @!visibility private
-  def default_data_constructor
-    lambda{ Object.new }
+  def ensure_valid(traversal_result)
+    traversal_result || Object.new
   end
 
   # @!visibility private

@@ -54,8 +54,12 @@ class Accessory::SubscriptAccessor < Accessory::Accessor
   end
 
   # @!visibility private
-  def default_data_constructor
-    lambda{ Hash.new }
+  def ensure_valid(traversal_result)
+    if traversal_result.respond_to?(:[])
+      traversal_result
+    else
+      {}
+    end
   end
 
   # @!visibility private

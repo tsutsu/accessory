@@ -34,8 +34,12 @@ class Accessory::FilterAccessor < Accessory::Accessor
   end
 
   # @!visibility private
-  def default_data_constructor
-    lambda{ Array.new }
+  def ensure_valid(traversal_result)
+    if traversal_result.kind_of?(Enumerable)
+      traversal_result
+    else
+      []
+    end
   end
 
   # Feeds each element of +data+ matching the predicate down the accessor chain,

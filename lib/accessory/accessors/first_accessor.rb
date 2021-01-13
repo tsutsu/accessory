@@ -17,8 +17,12 @@ require 'accessory/accessor'
 
 class Accessory::FirstAccessor < Accessory::Accessor
   # @!visibility private
-  def default_data_constructor
-    lambda{ Array.new }
+  def ensure_valid(traversal_result)
+    if traversal_result.kind_of?(Enumerable)
+      traversal_result
+    else
+      []
+    end
   end
 
   # @!visibility private
