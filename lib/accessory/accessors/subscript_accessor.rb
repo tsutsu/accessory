@@ -29,7 +29,7 @@ require 'accessory/accessor'
 #   # default-constructs a Hash, not an Array
 #   [].lens[0][0].put_in(1) # => [{0=>1}]
 #
-# Other accessors ({FirstAccessor}, {BetwixtAccessor}, etc.) may fit your expectations more closely for +Array+ traversal.
+# Other accessors ({Accessors::FirstAccessor}, {Accessors::BetwixtAccessor}, etc.) may fit your expectations more closely for +Array+ traversal.
 
 class Accessory::Accessors::SubscriptAccessor < Accessory::Accessor
   # @!visibility private

@@ -134,7 +134,8 @@ class Accessory::Accessor
   #   of the +get_result+s should replicate the data flow of {get}.
   # * the +new_value+ should be used to *replace* or *overwrite* the result of
   #   this accessor's traversal within +data+. For example, in
-  #   {SubscriptAccessor}, <tt>data[key] = new_value</tt> is executed.
+  #   {Accessors::SubscriptAccessor}, <tt>data[key] = new_value</tt> is
+  #   executed.
   #
   # In the <tt>:pop</tt> command case:
   # * the result of the traversal (*before* the yield) should be returned. This
@@ -142,7 +143,7 @@ class Accessory::Accessor
   #   traversal-results before feeding them into yield, in order to return them
   #   here.
   # * the traversal-result should be *removed* from +data+. For example, in
-  #   {SubscriptAccessor}, <tt>data.delete(key)</tt> is executed.
+  #   {Accessors::SubscriptAccessor}, <tt>data.delete(key)</tt> is executed.
   #
   # The successor in the accessor chain will receive the yielded
   # traversal-results as its own +data+.
@@ -195,9 +196,9 @@ class Accessory::Accessor
   #
   #
   # For example, if your accessor operates on +Enumerable+ values (like
-  # {AllAccessor}), then this method should validate that the +traversal_result+
-  # is +Enumerable+; and, if it isn't, return something that is — e.g. an empty
-  # +Array+.
+  # {Accessors::AllAccessor}), then this method should validate that the
+  # +traversal_result+ is +Enumerable+; and, if it isn't, return something that
+  # is — e.g. an empty +Array+.
   #
   # This logic is used to replace invalid intermediate values (e.g. `nil`s and
   # scalars) with containers during {Lens#put_in} et al.

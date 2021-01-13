@@ -8,8 +8,8 @@ require 'accessory/accessor'
 # the getter/setter pair <tt>.foo</tt> and <tt>.foo=</tt>.
 #
 # The abstract "attribute" does not have to correspond to an actual
-# +attr_accessor+; the {AttributeAccessor} will work as long as the relevant
-# named getter/setter methods exist on the receiver.
+# +attr_accessor+; the AttributeAccessor will work as long as the
+# relevant named getter/setter methods exist on the receiver.
 #
 # *Aliases*
 # * {Access.attr}

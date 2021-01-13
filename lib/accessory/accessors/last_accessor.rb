@@ -4,8 +4,8 @@ require 'accessory/accessor'
 # Traverses into the "last" element within an +Enumerable+, using
 # <tt>#last</tt>.
 #
-# This accessor can be preferable to {SubscriptAccessor} for objects that
-# are not subscriptable, e.g. {Range}.
+# This accessor can be preferable to {Accessors::SubscriptAccessor} for objects
+# that are not subscriptable, e.g. +Range+.
 #
 # *Aliases*
 # * {Access.last}
