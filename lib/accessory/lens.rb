@@ -164,7 +164,7 @@ class Accessory::Lens
   #   1. the _old_ value(s) found after all traversals, and
   #   2. the updated +subject+
   def update_in(subject, &new_value_fn)
-    _, new_data = self.get_and_update_in(data){ |v| [nil, new_value_fn.call(v)] }
+    _, new_data = self.get_and_update_in(subject){ |v| [nil, new_value_fn.call(v)] }
     new_data
   end
 
