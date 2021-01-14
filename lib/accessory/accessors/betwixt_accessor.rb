@@ -100,12 +100,14 @@ class Accessory::Accessors::BetwixtAccessor < Accessory::Accessor
     pos = traverse_or_default(data || [])
 
     case yield(pos)
-    in [result, new_value]
+    in [:dirty, result, new_value]
       data ||= []
       data.insert(@offset, new_value)
-      [result, data]
+      [:dirty, result, data]
     in :pop
-      [nil, data]
+      [:clean, nil, data]
+    in [:clean, result, _]
+      [:clean, result, data]
     end
   end
 end

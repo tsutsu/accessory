@@ -58,16 +58,18 @@ class Accessory::Accessors::FirstAccessor < Accessory::Accessor
     old_value = traverse_or_default(data)
 
     case yield(old_value)
-    in [result, new_value]
+    in [:clean, result, _]
+      [:clean, result, data]
+    in [:dirty, result, new_value]
       if data.respond_to?(:"first=")
         data.first = new_value
       else
         data[0] = new_value
       end
-      [result, data]
+      [:dirty, result, data]
     in :pop
       data.delete_at(0)
-      [old_value, data]
+      [:dirty, old_value, data]
     end
   end
 end

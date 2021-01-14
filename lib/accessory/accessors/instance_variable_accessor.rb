@@ -70,12 +70,14 @@ class Accessory::Accessors::InstanceVariableAccessor < Accessory::Accessor
     value = traverse_or_default(data)
 
     case yield(value)
-    in [result, new_value]
+    in [:clean, result, _]
+      [:clean, result, data]
+    in [:dirty, result, new_value]
       data.instance_variable_set(@ivar_name, new_value)
-      [result, data]
+      [:dirty, result, data]
     in :pop
       data.remove_instance_variable(@ivar_name)
-      [value, data]
+      [:dirty, value, data]
     end
   end
 end

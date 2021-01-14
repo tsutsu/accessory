@@ -50,17 +50,28 @@ class Accessory::Accessors::AllAccessor < Accessory::Accessor
   def get_and_update(data)
     results = []
     new_data = []
+    dirty = false
 
     (data || []).each do |pos|
       case yield(pos)
-      in [result, new_value]
+      in [:clean, result, _]
+        results.push(result)
+        new_data.push(pos)
+        # ok
+      in [:dirty, result, new_value]
         results.push(result)
         new_data.push(new_value)
+        dirty = true
       in :pop
         results.push(pos)
+        dirty = true
       end
     end
 
-    [results, new_data]
+    if dirty
+      [:dirty, results, new_data]
+    else
+      [:clean, results, data]
+    end
   end
 end

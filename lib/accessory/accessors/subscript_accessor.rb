@@ -92,12 +92,14 @@ class Accessory::Accessors::SubscriptAccessor < Accessory::Accessor
     value = traverse_or_default(data)
 
     case yield(value)
-    in [result, new_value]
+    in [:clean, result, _]
+      [:clean, result, data]
+    in [:dirty, result, new_value]
       data[@key] = new_value
-      [result, data]
+      [:dirty, result, data]
     in :pop
       data.delete(@key)
-      [value, data]
+      [:dirty, value, data]
     end
   end
 end

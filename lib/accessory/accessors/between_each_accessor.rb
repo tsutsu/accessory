@@ -75,15 +75,20 @@ class Accessory::Accessors::BetweenEachAccessor < Accessory::Accessor
   def get_and_update(data)
     results = []
     new_data = []
+    dirty = false
 
     positions = traverse_or_default(data || [])
 
     positions.each do |pos|
       case yield(pos)
-      in [result, new_value]
+      in [:clean, result, _]
+        results.push(result)
+      in [:dirty, result, new_value]
         new_data.push(new_value)
         results.push(result)
+        dirty = true
       in :pop
+        # ok
       end
 
       unless pos.last?
@@ -91,6 +96,10 @@ class Accessory::Accessors::BetweenEachAccessor < Accessory::Accessor
       end
     end
 
-    [results, new_data]
+    if dirty
+      [:dirty, results, new_data]
+    else
+      [:clean, results, data]
+    end
   end
 end

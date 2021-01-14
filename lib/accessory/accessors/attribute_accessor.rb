@@ -88,12 +88,14 @@ class Accessory::Accessors::AttributeAccessor < Accessory::Accessor
     value = traverse_or_default(data)
 
     case yield(value)
-    in [result, new_value]
+    in [:clean, result, _]
+      [:clean, result, data]
+    in [:dirty, result, new_value]
       data.send(@setter_method_name, new_value)
-      [result, data]
+      [:dirty, result, data]
     in :pop
       data.send(@setter_method_name, nil)
-      [value, data]
+      [:dirty, value, data]
     end
   end
 end

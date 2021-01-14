@@ -164,7 +164,15 @@ class Accessory::Lens
   #   1. the _old_ value(s) found after all traversals, and
   #   2. the updated +subject+
   def update_in(subject, &new_value_fn)
-    _, new_data = self.get_and_update_in(subject){ |v| [nil, new_value_fn.call(v)] }
+    _, _, new_data = self.get_and_update_in(subject) do |v|
+      case new_value_fn.call(v)
+      in [:set, new_value]
+        [:dirty, nil, new_value]
+      in :keep
+        [:clean, nil, v]
+      end
+    end
+
     new_data
   end
 
@@ -178,7 +186,7 @@ class Accessory::Lens
   # @param new_value [Object] a replacement value at the traversal position.
   # @return [Object] the updated +subject+
   def put_in(subject, new_value)
-    _, new_data = self.get_and_update_in(subject){ [nil, new_value] }
+    _, _, new_data = self.get_and_update_in(subject){ [:dirty, nil, new_value] }
     new_data
   end
 
@@ -191,7 +199,8 @@ class Accessory::Lens
   # @param subject [Object] the data-structure to traverse
   # @return [Object] the updated +subject+
   def pop_in(subject)
-    self.get_and_update_in(subject){ :pop }
+    _, popped_item, new_data = self.get_and_update_in(subject){ :pop }
+    [popped_item, new_data]
   end
 
   def append_accessor!(part)
