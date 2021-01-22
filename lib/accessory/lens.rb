@@ -170,6 +170,8 @@ class Accessory::Lens
         [:dirty, nil, new_value]
       in :keep
         [:clean, nil, v]
+      in :pop
+        :pop
       end
     end
 
